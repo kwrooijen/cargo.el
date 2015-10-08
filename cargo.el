@@ -4,6 +4,7 @@
 
 ;; Author: Kevin W. van Rooijen <kevin.van.rooijen@attichacker.com>
 ;; Keywords: tools
+;; Package-Requires: ((emacs "24.3") (cl-lib "0.5"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
