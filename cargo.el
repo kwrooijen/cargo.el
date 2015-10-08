@@ -46,6 +46,7 @@
 (defvar cargo-mode-map (make-keymap) "Cargo-mode keymap.")
 (defvar cargo-mode nil)
 
+;;;###autoload
 (define-minor-mode cargo-mode
   "Cargo minor mode. Used to hold keybindings for cargo-mode"
   nil "cargo" cargo-mode-map)
