@@ -10,7 +10,7 @@ First make sure to require cargo.el
 
 Then add it to your rust-mode-hook
 
-    (add-hook 'rust-mode-hook 'cargo-mode)
+    (add-hook 'rust-mode-hook 'cargo-minor-mode)
 
 You will now have the following key combinations at your disposal:
 

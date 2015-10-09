@@ -35,8 +35,6 @@
 ;;
 ;;; Code:
 
-(require 'cl-lib)
-
 (defgroup cargo-process nil
   "Cargo Process group."
   :prefix "cargo-process-"
@@ -95,9 +93,9 @@
     (funcall 'cargo-process-mode)
     (setq-local window-point-insertion-type t)))
 
-(cl-defun cargo-process--start (name command-args &key hidden)
+(defun cargo-process--start (name command-args &optional hidden)
   "Starts the Cargo process NAME with the cargo arguments COMMAND-ARGS.
-If the HIDDEN keyword is not nil then the buffer won't be shown."
+If the HIDDEN is not nil then the buffer won't be shown."
   (let* ((buffer-name (concat "*Cargo " name "*"))
          (buffer (get-buffer-create buffer-name))
          (process-args (concat "cargo " command-args)))
@@ -129,7 +127,7 @@ Cargo: Compile the current project."
   "Run the Cargo clean command.
 Cargo: Remove the target directory."
   (interactive)
-  (cargo-process--start "Clean" "clean" :hidden t))
+  (cargo-process--start "Clean" "clean" t))
 
 ;;;###autoload
 (defun cargo-process-doc ()
@@ -147,7 +145,7 @@ If BIN is t then create a binary application, otherwise a library."
   (interactive "sProject Name: ")
   (let* ((bin (when (or bin (y-or-n-p "Create Bin Project?")) "--bin"))
          (command (concat "new " name " " bin)))
-    (cargo-process--start "New" command :hidden t)))
+    (cargo-process--start "New" command t)))
 
 ;;;###autoload
 (defun cargo-process-run ()

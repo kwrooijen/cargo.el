@@ -42,22 +42,22 @@
   :prefix "cargo-"
   :group 'tools)
 
-(defvar cargo-mode-map (make-keymap) "Cargo-mode keymap.")
-(defvar cargo-mode nil)
+(defvar cargo-minor-mode-map (make-keymap) "Cargo-mode keymap.")
+(defvar cargo-minor-mode nil)
 
-(define-minor-mode cargo-mode
+(define-minor-mode cargo-minor-mode
   "Cargo minor mode. Used to hold keybindings for cargo-mode"
-  nil "cargo" cargo-mode-map)
+  nil "cargo" cargo-minor-mode-map)
 
-(define-key cargo-mode-map (kbd "C-c C-c C-e") 'cargo-process-bench)
-(define-key cargo-mode-map (kbd "C-c C-c C-b") 'cargo-process-build)
-(define-key cargo-mode-map (kbd "C-c C-c C-c") 'cargo-process-clean)
-(define-key cargo-mode-map (kbd "C-c C-c C-d") 'cargo-process-doc)
-(define-key cargo-mode-map (kbd "C-c C-c C-n") 'cargo-process-new)
-(define-key cargo-mode-map (kbd "C-c C-c C-r") 'cargo-process-run)
-(define-key cargo-mode-map (kbd "C-c C-c C-s") 'cargo-process-search)
-(define-key cargo-mode-map (kbd "C-c C-c C-t") 'cargo-process-test)
-(define-key cargo-mode-map (kbd "C-c C-c C-u") 'cargo-process-update)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-e") 'cargo-process-bench)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-b") 'cargo-process-build)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-c") 'cargo-process-clean)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-d") 'cargo-process-doc)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-n") 'cargo-process-new)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-r") 'cargo-process-run)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-s") 'cargo-process-search)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-t") 'cargo-process-test)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-u") 'cargo-process-update)
 
 (provide 'cargo)
 ;;; cargo.el ends here
