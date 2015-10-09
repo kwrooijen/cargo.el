@@ -4,6 +4,7 @@
 
 ;; Author: Kevin W. van Rooijen <kevin.van.rooijen@attichacker.com>
 ;; Keywords: tools
+;; Package-Requires: ((emacs "24.3"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -45,6 +46,7 @@
 (defvar cargo-minor-mode-map (make-keymap) "Cargo-mode keymap.")
 (defvar cargo-minor-mode nil)
 
+;;;###autoload
 (define-minor-mode cargo-minor-mode
   "Cargo minor mode. Used to hold keybindings for cargo-mode"
   nil "cargo" cargo-minor-mode-map)
