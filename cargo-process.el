@@ -42,6 +42,7 @@
 
 (defvar cargo-process-mode-hook nil)
 (defvar cargo-process-mode-map nil "Keymap for Cargo major mode.")
+(defvar cargo-process-last-command nil "Command used last for repeating.")
 
 (defface cargo-process--error-face
   '((t (:foreground "#FF0000")))
@@ -94,11 +95,12 @@
     (setq-local window-point-insertion-type t)))
 
 (defun cargo-process--start (name command-args &optional hidden)
-  "Starts the Cargo process NAME with the cargo arguments COMMAND-ARGS.
+  "Start the Cargo process NAME with the cargo arguments COMMAND-ARGS.
 If the HIDDEN is not nil then the buffer won't be shown."
   (let* ((buffer-name (concat "*Cargo " name "*"))
          (buffer (get-buffer-create buffer-name))
          (process-args (concat "cargo " command-args)))
+    (setq cargo-process-last-command (list name command-args hidden))
     (cargo-process--cleanup buffer-name)
     (start-process-shell-command buffer-name buffer process-args)
     (cargo-process--activate-mode buffer)
@@ -143,7 +145,7 @@ Cargo: Create a new cargo project.
 NAME is the name of your application.
 If BIN is t then create a binary application, otherwise a library."
   (interactive "sProject Name: ")
-  (let* ((bin (when (or bin (y-or-n-p "Create Bin Project?")) "--bin"))
+  (let* ((bin (when (or bin (y-or-n-p "Create Bin Project? ")) "--bin"))
          (command (concat "new " name " " bin)))
     (cargo-process--start "New" command t)))
 
@@ -175,6 +177,14 @@ Cargo: Run the tests."
 Cargo: Update dependencies listed in Cargo.lock."
   (interactive)
   (cargo-process--start "Update" "update"))
+
+;;;###autoload
+(defun cargo-process-repeat ()
+  "Run the last cargo-process command."
+  (interactive)
+  (if cargo-process-last-command
+      (apply 'cargo-process--start cargo-process-last-command)
+    (message "No last Cargo command.")))
 
 (provide 'cargo-process)
 ;;; cargo-process.el ends here

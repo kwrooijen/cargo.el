@@ -53,13 +53,14 @@
 
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-e") 'cargo-process-bench)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-b") 'cargo-process-build)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-c") 'cargo-process-clean)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-l") 'cargo-process-clean)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-d") 'cargo-process-doc)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-n") 'cargo-process-new)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-r") 'cargo-process-run)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-s") 'cargo-process-search)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-t") 'cargo-process-test)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-u") 'cargo-process-update)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-c") 'cargo-process-repeat)
 
 (provide 'cargo)
 ;;; cargo.el ends here
