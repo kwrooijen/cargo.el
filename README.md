@@ -10,11 +10,7 @@ This package can be installed through [melpa](http://melpa.milkbox.net/):
 
 ## Usage
 
-First make sure to require cargo.el
-
-    (require 'cargo)
-
-Then add it to your rust-mode-hook
+Add cargo-minor-mode to your rust-mode-hook
 
     (add-hook 'rust-mode-hook 'cargo-minor-mode)
 
