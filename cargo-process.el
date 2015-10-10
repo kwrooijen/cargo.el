@@ -80,6 +80,7 @@
     ("\\^\\~*" . 'cargo-process--pointer-face)
     ("^\s*Compiling.*" . 'cargo-process--standard-face)
     ("^\s*Running.*" . 'cargo-process--standard-face)
+    ("^\s*Updating.*" . 'cargo-process--standard-face)
     ("test result: FAILED." . 'cargo-process--error-face)
     ("test result: ok." . 'cargo-process--ok-face)
     ("test\s.*\sFAILED" . 'cargo-process--error-face)
@@ -121,7 +122,7 @@ If the HIDDEN is not nil then the buffer won't be shown."
     (setq cargo-process-last-command (list name command-args hidden))
     (cargo-process--cleanup (concat "*" buffer-name "*"))
     (setq buffer
-          (make-comint buffer-name "cargo" nil command-args))
+          (apply 'make-comint buffer-name "cargo" nil command-args))
     (cargo-process--activate-mode buffer)
     (with-current-buffer buffer
       (setq mode-name "Cargo-Process"))
@@ -134,28 +135,28 @@ If the HIDDEN is not nil then the buffer won't be shown."
   "Run the Cargo bench command.
 Cargo: Run the benchmarks."
   (interactive)
-  (cargo-process--start "Bench" "bench"))
+  (cargo-process--start "Bench" (list "bench")))
 
 ;;;###autoload
 (defun cargo-process-build ()
   "Run the Cargo build command.
 Cargo: Compile the current project."
   (interactive)
-  (cargo-process--start "Build" "build"))
+  (cargo-process--start "Build" (list "build")))
 
 ;;;###autoload
 (defun cargo-process-clean ()
   "Run the Cargo clean command.
 Cargo: Remove the target directory."
   (interactive)
-  (cargo-process--start "Clean" "clean" t))
+  (cargo-process--start "Clean" (list "clean") t))
 
 ;;;###autoload
 (defun cargo-process-doc ()
   "Run the Cargo doc command.
 Cargo: Build this project's and its dependencies' documentation."
   (interactive)
-  (cargo-process--start "Doc" "doc"))
+  (cargo-process--start "Doc" (list "doc")))
 
 ;;;###autoload
 (defun cargo-process-new (name &optional bin)
@@ -165,15 +166,17 @@ NAME is the name of your application.
 If BIN is t then create a binary application, otherwise a library."
   (interactive "sProject Name: ")
   (let* ((bin (when (or bin (y-or-n-p "Create Bin Project? ")) "--bin"))
-         (command (concat "new " name " " bin)))
-    (cargo-process--start "New" command t)))
+         (command (if bin
+                      (list "new" name bin)
+                    (list "new" name))))
+    (cargo-process--start "New" command)))
 
 ;;;###autoload
 (defun cargo-process-run ()
   "Run the Cargo run command.
 Cargo: Build and execute src/main.rs."
   (interactive)
-  (cargo-process--start "Run" "run"))
+  (cargo-process--start "Run" (list "run")))
 
 ;;;###autoload
 (defun cargo-process-search (search-term)
@@ -181,21 +184,21 @@ Cargo: Build and execute src/main.rs."
 Cargo: Search registry for crates.
 SEARCH-TERM is used as the search term for the Cargo registry."
   (interactive "sSearch: ")
-  (cargo-process--start "Search" (format "search %s" search-term)))
+  (cargo-process--start "Search" (list "search" search-term)))
 
 ;;;###autoload
 (defun cargo-process-test ()
   "Run the Cargo test command.
 Cargo: Run the tests."
   (interactive)
-  (cargo-process--start "Test" "test"))
+  (cargo-process--start "Test" (list "test")))
 
 ;;;###autoload
 (defun cargo-process-update ()
   "Run the Cargo update command.
 Cargo: Update dependencies listed in Cargo.lock."
   (interactive)
-  (cargo-process--start "Update" "update"))
+  (cargo-process--start "Update" (list "update")))
 
 ;;;###autoload
 (defun cargo-process-repeat ()
