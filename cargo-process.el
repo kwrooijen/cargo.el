@@ -49,6 +49,11 @@
   "Keymap for Cargo major mode.")
 (defvar cargo-process-last-command nil "Command used last for repeating.")
 
+(defface cargo-process--ok-face
+  '((t (:foreground "#00ff00")))
+  "Ok face"
+  :group 'cargo-process)
+
 (defface cargo-process--error-face
   '((t (:foreground "#FF0000")))
   "Error face"
@@ -59,9 +64,26 @@
   "Warning face"
   :group 'cargo-process)
 
+(defface cargo-process--pointer-face
+  '((t (:foreground "#ff00ff")))
+  "Pointer face"
+  :group 'cargo-process)
+
+(defface cargo-process--standard-face
+  '((t (:foreground "#ffa500")))
+  "Standard face"
+  :group 'cargo-process)
+
 (defconst cargo-process-font-lock-keywords
-  '(("error" . 'cargo-process--error-face)
-    ("warning" . 'cargo-process--warning-face))
+  '(("error\\:" . 'cargo-process--error-face)
+    ("warning\\:" . 'cargo-process--warning-face)
+    ("\\^\\~*" . 'cargo-process--pointer-face)
+    ("^\s*Compiling.*" . 'cargo-process--standard-face)
+    ("^\s*Running.*" . 'cargo-process--standard-face)
+    ("test result: FAILED." . 'cargo-process--error-face)
+    ("test result: ok." . 'cargo-process--ok-face)
+    ("test\s.*\sFAILED" . 'cargo-process--error-face)
+    ("test\s.*\sok" . 'cargo-process--ok-face))
   "Minimal highlighting expressions for cargo-process mode.")
 
 (define-derived-mode cargo-process-mode comint-mode "Cargo-Process."
