@@ -32,8 +32,11 @@
 ;;  * cargo-process-search - Search registry for crates.
 ;;  * cargo-process-test   - Run the tests.
 ;;  * cargo-process-update - Update dependencies listed in Cargo.lock.
+;;  * cargo-process-repeat - Run the last cargo-process command.
 ;;
 ;;; Code:
+
+(require 'comint)
 
 (defgroup cargo-process nil
   "Cargo Process group."
@@ -41,7 +44,9 @@
   :group 'cargo)
 
 (defvar cargo-process-mode-hook nil)
-(defvar cargo-process-mode-map nil "Keymap for Cargo major mode.")
+(defvar cargo-process-mode-map
+  (nconc (make-sparse-keymap) comint-mode-map)
+  "Keymap for Cargo major mode.")
 (defvar cargo-process-last-command nil "Command used last for repeating.")
 
 (defface cargo-process--error-face
@@ -59,34 +64,26 @@
     ("warning" . 'cargo-process--warning-face))
   "Minimal highlighting expressions for cargo-process mode.")
 
-(define-derived-mode cargo-process-mode fundamental-mode "Cargo-Process."
+(define-derived-mode cargo-process-mode comint-mode "Cargo-Process."
   "Major mode for the Cargo process buffer."
   (use-local-map cargo-process-mode-map)
   (setq major-mode 'cargo-process-mode)
   (setq mode-name "Cargo-Process")
-  ;; FIXME Why does the process not display full buffer when these are set to 10000 and 1?
-  (setq-local scroll-conservatively 0) ;; 10000
-  (setq-local scroll-step 0) ;; 1
   (setq-local truncate-lines t)
-  (read-only-mode t)
   (run-hooks 'cargo-process-mode-hook)
   (font-lock-add-keywords nil cargo-process-font-lock-keywords))
 
 (defun cargo-process--finished-sentinel (process event)
   "Execute after PROCESS return and EVENT is 'finished'."
   (when (equal event "finished\n")
-    (with-current-buffer (process-buffer process)
-      (setq mode-name "Cargo-Process:no process"))
     (message "Cargo Process finished.")))
 
 (defun cargo-process--cleanup (buffer)
   "Clean up the old Cargo process BUFFER when a similar process is run."
-  (when (get-buffer-process buffer)
-    (stop-process buffer))
+  (when (get-buffer-process (get-buffer buffer))
+    (delete-process buffer))
   (when (get-buffer buffer)
-    (with-current-buffer buffer
-      (read-only-mode -1)
-      (erase-buffer))))
+    (kill-buffer buffer)))
 
 (defun cargo-process--activate-mode (buffer)
   "Execute commands BUFFER at process start."
@@ -97,18 +94,18 @@
 (defun cargo-process--start (name command-args &optional hidden)
   "Start the Cargo process NAME with the cargo arguments COMMAND-ARGS.
 If the HIDDEN is not nil then the buffer won't be shown."
-  (let* ((buffer-name (concat "*Cargo " name "*"))
-         (buffer (get-buffer-create buffer-name))
-         (process-args (concat "cargo " command-args)))
+  (let* ((buffer-name (concat "Cargo " name))
+         buffer)
     (setq cargo-process-last-command (list name command-args hidden))
-    (cargo-process--cleanup buffer-name)
-    (start-process-shell-command buffer-name buffer process-args)
+    (cargo-process--cleanup (concat "*" buffer-name "*"))
+    (setq buffer
+          (make-comint buffer-name "cargo" nil command-args))
     (cargo-process--activate-mode buffer)
     (with-current-buffer buffer
-      (setq mode-name "Cargo-Process:run"))
-    (set-process-sentinel (get-buffer-process buffer-name) 'cargo-process--finished-sentinel)
+      (setq mode-name "Cargo-Process"))
+    (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)
     (unless hidden
-      (display-buffer buffer-name))))
+      (display-buffer buffer))))
 
 ;;;###autoload
 (defun cargo-process-bench ()
