@@ -77,7 +77,7 @@
 (defconst cargo-process-font-lock-keywords
   '(("error\\:" . 'cargo-process--error-face)
     ("warning\\:" . 'cargo-process--warning-face)
-    ("\\^\\~*" . 'cargo-process--pointer-face)
+    ("^\s*\\^\\~*\s*$" . 'cargo-process--pointer-face)
     ("^\s*Compiling.*" . 'cargo-process--standard-face)
     ("^\s*Running.*" . 'cargo-process--standard-face)
     ("^\s*Updating.*" . 'cargo-process--standard-face)
