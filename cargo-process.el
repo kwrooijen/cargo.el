@@ -36,17 +36,15 @@
 ;;
 ;;; Code:
 
-(require 'comint)
-
 (defgroup cargo-process nil
   "Cargo Process group."
   :prefix "cargo-process-"
   :group 'cargo)
 
-(defvar cargo-process-mode-hook nil)
 (defvar cargo-process-mode-map
-  (nconc (make-sparse-keymap) comint-mode-map)
+  (nconc (make-sparse-keymap) compilation-mode-map)
   "Keymap for Cargo major mode.")
+
 (defvar cargo-process-last-command nil "Command used last for repeating.")
 
 (defface cargo-process--ok-face
@@ -87,7 +85,7 @@
     ("test\s.*\sok" . 'cargo-process--ok-face))
   "Minimal highlighting expressions for cargo-process mode.")
 
-(define-derived-mode cargo-process-mode comint-mode "Cargo-Process."
+(define-derived-mode cargo-process-mode compilation-mode "Cargo-Process."
   "Major mode for the Cargo process buffer."
   (use-local-map cargo-process-mode-map)
   (setq major-mode 'cargo-process-mode)
@@ -95,6 +93,10 @@
   (setq-local truncate-lines t)
   (run-hooks 'cargo-process-mode-hook)
   (font-lock-add-keywords nil cargo-process-font-lock-keywords))
+
+(defun cargo-process--compilation-name (mode-name)
+  "Name of the Cargo Process.  MODE-NAME is unused."
+  "*Cargo Process*")
 
 (defun cargo-process--finished-sentinel (process event)
   "Execute after PROCESS return and EVENT is 'finished'."
@@ -114,49 +116,43 @@
     (funcall 'cargo-process-mode)
     (setq-local window-point-insertion-type t)))
 
-(defun cargo-process--start (name command-args &optional hidden)
-  "Start the Cargo process NAME with the cargo arguments COMMAND-ARGS.
-If the HIDDEN is not nil then the buffer won't be shown."
-  (let* ((buffer-name (concat "Cargo " name))
-         buffer)
-    (setq cargo-process-last-command (list name command-args hidden))
-    (cargo-process--cleanup (concat "*" buffer-name "*"))
-    (setq buffer
-          (apply 'make-comint buffer-name "cargo" nil command-args))
-    (cargo-process--activate-mode buffer)
-    (with-current-buffer buffer
-      (setq mode-name "Cargo-Process"))
-    (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)
-    (unless hidden
-      (display-buffer buffer))))
+(defun cargo-process--start (name command)
+  "Start the Cargo process NAME with the cargo command COMMAND."
+  (let ((buffer (concat "*Cargo " name "*")))
+    (setq cargo-process-last-command (list name command))
+    (cargo-process--cleanup buffer)
+    (compilation-start command 'cargo-process-mode 'cargo-process--compilation-name)
+    (with-current-buffer "*Cargo Process*"
+      (rename-buffer buffer))
+    (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)))
 
 ;;;###autoload
 (defun cargo-process-bench ()
   "Run the Cargo bench command.
 Cargo: Run the benchmarks."
   (interactive)
-  (cargo-process--start "Bench" (list "bench")))
+  (cargo-process--start "Bench" "cargo bench"))
 
 ;;;###autoload
 (defun cargo-process-build ()
   "Run the Cargo build command.
 Cargo: Compile the current project."
   (interactive)
-  (cargo-process--start "Build" (list "build")))
+  (cargo-process--start "Build" "cargo build"))
 
 ;;;###autoload
 (defun cargo-process-clean ()
   "Run the Cargo clean command.
 Cargo: Remove the target directory."
   (interactive)
-  (cargo-process--start "Clean" (list "clean") t))
+  (cargo-process--start "Clean" "cargo clean"))
 
 ;;;###autoload
 (defun cargo-process-doc ()
   "Run the Cargo doc command.
 Cargo: Build this project's and its dependencies' documentation."
   (interactive)
-  (cargo-process--start "Doc" (list "doc")))
+  (cargo-process--start "Doc" "cargo doc"))
 
 ;;;###autoload
 (defun cargo-process-new (name &optional bin)
@@ -165,18 +161,15 @@ Cargo: Create a new cargo project.
 NAME is the name of your application.
 If BIN is t then create a binary application, otherwise a library."
   (interactive "sProject Name: ")
-  (let* ((bin (when (or bin (y-or-n-p "Create Bin Project? ")) "--bin"))
-         (command (if bin
-                      (list "new" name bin)
-                    (list "new" name))))
-    (cargo-process--start "New" command)))
+  (let* ((bin (when (or bin (y-or-n-p "Create Bin Project? ")) "--bin")))
+    (cargo-process--start "New" (concat "cargo new " name " " bin))))
 
 ;;;###autoload
 (defun cargo-process-run ()
   "Run the Cargo run command.
 Cargo: Build and execute src/main.rs."
   (interactive)
-  (cargo-process--start "Run" (list "run")))
+  (cargo-process--start "Run" "cargo run"))
 
 ;;;###autoload
 (defun cargo-process-search (search-term)
@@ -184,21 +177,21 @@ Cargo: Build and execute src/main.rs."
 Cargo: Search registry for crates.
 SEARCH-TERM is used as the search term for the Cargo registry."
   (interactive "sSearch: ")
-  (cargo-process--start "Search" (list "search" search-term)))
+  (cargo-process--start "Search" (concat "cargo search " search-term)))
 
 ;;;###autoload
 (defun cargo-process-test ()
   "Run the Cargo test command.
 Cargo: Run the tests."
   (interactive)
-  (cargo-process--start "Test" (list "test")))
+  (cargo-process--start "Test" "cargo test"))
 
 ;;;###autoload
 (defun cargo-process-update ()
   "Run the Cargo update command.
 Cargo: Update dependencies listed in Cargo.lock."
   (interactive)
-  (cargo-process--start "Update" (list "update")))
+  (cargo-process--start "Update" "cargo update"))
 
 ;;;###autoload
 (defun cargo-process-repeat ()
