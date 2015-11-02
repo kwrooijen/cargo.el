@@ -153,17 +153,17 @@
 
 (defun cargo-process--get-current-file-tests ()
   "Generate regexp to match test from the current buffer."
-  (with-current-buffer (current-buffer)
-    (save-excursion
-      (goto-char (point-min))
-      (when (string-match "\.rs$" buffer-file-name)
-        (let ((regex "^[[:space:]]*fn[[:space:]]*")
-              result)
-          (while
-              (re-search-forward regex nil t)
-            (let ((name (thing-at-point 'sexp)))
-              (setq result (append result (list name)))))
-          (mapconcat 'identity result "|"))))))
+  ;;(with-current-buffer (current-buffer)
+  (save-excursion
+    (goto-char (point-min))
+    (when (string-match "\.rs$" buffer-file-name)
+      (let ((regex "^[[:space:]]*fn[[:space:]]*")
+            result)
+        (while
+            (re-search-forward regex nil t)
+          (let ((name (thing-at-point 'sexp)))
+            (setq result (append result (list name)))))
+        (mapconcat 'identity result "|")))))
 
 
 ;;;###autoload
