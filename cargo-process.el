@@ -33,6 +33,10 @@
 ;;  * cargo-process-test   - Run the tests.
 ;;  * cargo-process-update - Update dependencies listed in Cargo.lock.
 ;;  * cargo-process-repeat - Run the last cargo-process command.
+
+;;  * cargo-process-current-test         - Run the current unit test.
+;;  * cargo-process-current-file-tests   -  the current file unit tests.
+
 ;;
 ;;; Code:
 
@@ -126,6 +130,42 @@
       (rename-buffer buffer))
     (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)))
 
+
+;; I/O tools
+
+
+(defun cargo-process--get-current-test ()
+  "Return the current test."
+  (let ((start (point))
+        name)
+    (save-excursion
+      (end-of-line)
+      (unless (and
+               (search-backward-regexp
+                (s-concat "^[[:space:]]*fn[[:space:]]*") nil t)
+               (save-excursion (go-end-of-defun) (< start (point))))
+        (error "Unable to find test"))
+      (save-excursion
+        (search-forward "fn ")
+        (setq name (thing-at-point 'sexp))))
+    name))
+
+
+(defun cargo-process--get-current-file-tests ()
+  "Generate regexp to match test from the current buffer."
+  (with-current-buffer (current-buffer)
+    (save-excursion
+      (goto-char (point-min))
+      (when (string-match "\.rs$" buffer-file-name)
+        (let ((regex "^[[:space:]]*fn[[:space:]]*")
+              result)
+          (while
+              (re-search-forward regex nil t)
+            (let ((name (thing-at-point 'sexp)))
+              (setq result (append result (list name)))))
+          (mapconcat 'identity result "|"))))))
+
+
 ;;;###autoload
 (defun cargo-process-bench ()
   "Run the Cargo bench command.
@@ -185,6 +225,26 @@ SEARCH-TERM is used as the search term for the Cargo registry."
 Cargo: Run the tests."
   (interactive)
   (cargo-process--start "Test" "cargo test"))
+
+;;;###autoload
+(defun cargo-process-current-test ()
+  "Run the Cargo test command for the current test.
+Cargo: Run the tests."
+  (interactive)
+  (let ((name (cargo-process--get-current-test)))
+    (cargo-process--start "Test" (s-concat "cargo test " name))))
+
+;; TODO: how run multiple test using cargo ?
+;; FIX: cargo test it_works it_works_another just_a_test
+
+;; ;;;###autoload
+;; (defun cargo-process-current-file-tests ()
+;;   "Run the Cargo test command for the current file.
+;; Cargo: Run the tests."
+;;   (interactive)
+;;   (let ((names (cargo-process--get-current-file-tests)))
+;;     (cargo-process--start "Test" (s-concat "cargo test " names))))
+
 
 ;;;###autoload
 (defun cargo-process-update ()
