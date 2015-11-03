@@ -134,6 +134,9 @@
 ;; I/O tools
 
 
+(defconst rust-test-regex "^[[:space:]]*fn[[:space:]]*"
+  "Regex to find Rust unit test function.")
+
 (defun cargo-process--get-current-test ()
   "Return the current test."
   (let ((start (point))
@@ -141,9 +144,8 @@
     (save-excursion
       (end-of-line)
       (unless (and
-               (search-backward-regexp
-                (s-concat "^[[:space:]]*fn[[:space:]]*") nil t)
-               (save-excursion (go-end-of-defun) (< start (point))))
+               (search-backward-regexp rust-test-regex nil t)
+               (save-excursion (rust-end-of-defun) (< start (point))))
         (error "Unable to find test"))
       (save-excursion
         (search-forward "fn ")
@@ -157,10 +159,9 @@
   (save-excursion
     (goto-char (point-min))
     (when (string-match "\.rs$" buffer-file-name)
-      (let ((regex "^[[:space:]]*fn[[:space:]]*")
-            result)
+      (let (result)
         (while
-            (re-search-forward regex nil t)
+            (re-search-forward rust-test-regex  nil t)
           (let ((name (thing-at-point 'sexp)))
             (setq result (append result (list name)))))
         (mapconcat 'identity result "|")))))
