@@ -153,18 +153,17 @@
     name))
 
 
-(defun cargo-process--get-current-file-tests ()
-  "Generate regexp to match test from the current buffer."
-  ;;(with-current-buffer (current-buffer)
-  (save-excursion
-    (goto-char (point-min))
-    (when (string-match "\.rs$" buffer-file-name)
-      (let (result)
-        (while
-            (re-search-forward rust-test-regex  nil t)
-          (let ((name (thing-at-point 'sexp)))
-            (setq result (append result (list name)))))
-        (mapconcat 'identity result "|")))))
+;; (defun cargo-process--get-current-file-tests ()
+;;   "Generate regexp to match test from the current buffer."
+;;   (save-excursion
+;;     (goto-char (point-min))
+;;     (when (string-match "\.rs$" buffer-file-name)
+;;       (let (result)
+;;         (while
+;;             (re-search-forward rust-test-regex  nil t)
+;;           (let ((name (thing-at-point 'sexp)))
+;;             (setq result (append result (list name)))))
+;;         (mapconcat 'identity result "|")))))
 
 
 ;;;###autoload
@@ -235,16 +234,13 @@ Cargo: Run the tests."
   (let ((name (cargo-process--get-current-test)))
     (cargo-process--start "Test" (concat "cargo test " name))))
 
-;; TODO: how run multiple test using cargo ?
-;; FIX: cargo test it_works it_works_another just_a_test
-
 ;; ;;;###autoload
-;; (defun cargo-process-current-file-tests ()
-;;   "Run the Cargo test command for the current file.
-;; Cargo: Run the tests."
-;;   (interactive)
-;;   (let ((names (cargo-process--get-current-file-tests)))
-;;     (cargo-process--start "Test" (s-concat "cargo test " names))))
+(defun cargo-process-current-file-tests ()
+  "Run the Cargo test command for the current file.
+Cargo: Run the tests."
+  (interactive)
+  (let ((filename (file-name-base)))
+    (cargo-process--start "Test" (s-concat "cargo test --test " filename))))
 
 
 ;;;###autoload
