@@ -233,7 +233,7 @@ Cargo: Run the tests."
 Cargo: Run the tests."
   (interactive)
   (let ((name (cargo-process--get-current-test)))
-    (cargo-process--start "Test" (s-concat "cargo test " name))))
+    (cargo-process--start "Test" (concat "cargo test " name))))
 
 ;; TODO: how run multiple test using cargo ?
 ;; FIX: cargo test it_works it_works_another just_a_test
