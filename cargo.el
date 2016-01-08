@@ -34,6 +34,9 @@
 ;;  * C-c C-c C-t - cargo-process-test
 ;;  * C-c C-c C-u - cargo-process-update
 ;;  * C-c C-c C-c - cargo-process-repeat
+;;  * C-c C-c C-f - cargo-process-current-test
+;;  * C-c C-c C-i - cargo-process-current-file-tests
+
 ;;
 ;;; Code:
 
@@ -62,6 +65,8 @@
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-t") 'cargo-process-test)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-u") 'cargo-process-update)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-c") 'cargo-process-repeat)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-f") 'cargo-process-current-test)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-i") 'cargo-process-current-file-tests)
 
 (provide 'cargo)
 ;;; cargo.el ends here
