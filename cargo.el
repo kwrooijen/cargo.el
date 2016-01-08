@@ -3,8 +3,9 @@
 ;; Copyright (C) 2015  Kevin W. van Rooijen
 
 ;; Author: Kevin W. van Rooijen <kevin.van.rooijen@attichacker.com>
+;; Version  : 0.1.0
 ;; Keywords: tools
-;; Package-Requires: ((emacs "24.3"))
+;; Package-Requires: ((emacs "24.3") (rust-mode "0.2.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -36,7 +37,6 @@
 ;;  * C-c C-c C-c - cargo-process-repeat
 ;;  * C-c C-c C-f - cargo-process-current-test
 ;;  * C-c C-c C-i - cargo-process-current-file-tests
-
 ;;
 ;;; Code:
 
@@ -66,7 +66,7 @@
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-u") 'cargo-process-update)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-c") 'cargo-process-repeat)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-f") 'cargo-process-current-test)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-i") 'cargo-process-current-file-tests)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-o") 'cargo-process-current-file-tests)
 
 (provide 'cargo)
 ;;; cargo.el ends here

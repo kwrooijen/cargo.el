@@ -32,3 +32,5 @@ You will now have the following key combinations at your disposal:
  <kbd>C-c C-c C-t</kbd> | cargo-process-test
  <kbd>C-c C-c C-u</kbd> | cargo-process-update
  <kbd>C-c C-c C-c</kbd> | cargo-process-repeat
+ <kbd>C-c C-c C-f</kbd> | cargo-process-current-tests
+ <kbd>C-c C-c C-o</kbd> | cargo-process-current-file-tests
