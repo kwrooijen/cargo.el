@@ -33,7 +33,6 @@
 ;;  * cargo-process-test   - Run the tests.
 ;;  * cargo-process-update - Update dependencies listed in Cargo.lock.
 ;;  * cargo-process-repeat - Run the last cargo-process command.
-
 ;;  * cargo-process-current-test         - Run the current unit test.
 ;;  * cargo-process-current-file-tests   -  the current file unit tests.
 
@@ -75,6 +74,9 @@
   '((t (:foreground "#ffa500")))
   "Standard face"
   :group 'cargo-process)
+
+(defconst cargo-process-test-regexp "^[[:space:]]*fn[[:space:]]*"
+  "Regex to find Rust unit test function.")
 
 (defconst cargo-process-font-lock-keywords
   '(("error\\:" . 'cargo-process--error-face)
@@ -130,48 +132,17 @@
       (rename-buffer buffer))
     (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)))
 
-
-;; I/O tools
-
-
-(defconst rust-test-regex "^[[:space:]]*fn[[:space:]]*"
-  "Regex to find Rust unit test function.")
-
 (defun cargo-process--get-current-test ()
   "Return the current test."
-  (let ((start (point))
-        name)
+  (let ((start (point)))
     (save-excursion
       (end-of-line)
-      (unless (and
-               (search-backward-regexp rust-test-regex nil t)
-               (save-excursion (rust-end-of-defun) (< start (point))))
+      (unless (and (search-backward-regexp cargo-process-test-regexp nil t)
+                   (save-excursion (rust-end-of-defun) (< start (point))))
         (error "Unable to find test"))
-      (save-excursion
-        (search-forward "fn ")
-        (setq name (thing-at-point 'sexp))))
-    name))
+      (search-forward "fn ")
+      (thing-at-point 'sexp))))
 
-
-;; (defun cargo-process--get-current-file-tests ()
-;;   "Generate regexp to match test from the current buffer."
-;;   (save-excursion
-;;     (goto-char (point-min))
-;;     (when (string-match "\.rs$" buffer-file-name)
-;;       (let (result)
-;;         (while
-;;             (re-search-forward rust-test-regex  nil t)
-;;           (let ((name (thing-at-point 'sexp)))
-;;             (setq result (append result (list name)))))
-;;         (mapconcat 'identity result "|")))))
-
-
-;;;###autoload
-(defun cargo-process-bench ()
-  "Run the Cargo bench command.
-Cargo: Run the benchmarks."
-  (interactive)
-  (cargo-process--start "Bench" "cargo bench"))
 
 ;;;###autoload
 (defun cargo-process-build ()
@@ -231,17 +202,17 @@ Cargo: Run the tests."
   "Run the Cargo test command for the current test.
 Cargo: Run the tests."
   (interactive)
-  (let ((name (cargo-process--get-current-test)))
-    (cargo-process--start "Test" (concat "cargo test " name))))
+  (let ((name (cargo-process--get-current-test))
+        (filename (file-name-base)))
+    (cargo-process--start "Test" (format "cargo test --test %s %s" filename name))))
 
-;; ;;;###autoload
+;;;###autoload
 (defun cargo-process-current-file-tests ()
   "Run the Cargo test command for the current file.
 Cargo: Run the tests."
   (interactive)
   (let ((filename (file-name-base)))
-    (cargo-process--start "Test" (s-concat "cargo test --test " filename))))
-
+    (cargo-process--start "Test" (concat "cargo test --test " filename))))
 
 ;;;###autoload
 (defun cargo-process-update ()
