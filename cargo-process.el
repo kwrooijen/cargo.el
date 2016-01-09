@@ -143,6 +143,12 @@
       (search-forward "fn ")
       (thing-at-point 'sexp))))
 
+;;;###autoload
+(defun cargo-process-bench ()
+  "Run the Cargo bench command.
+Cargo: Run the benchmarks."
+  (interactive)
+  (cargo-process--start "Bench" "cargo bench"))
 
 ;;;###autoload
 (defun cargo-process-build ()
