@@ -39,6 +39,8 @@
 ;;
 ;;; Code:
 
+(require 'compile)
+
 (defgroup cargo-process nil
   "Cargo Process group."
   :prefix "cargo-process-"
