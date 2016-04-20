@@ -146,7 +146,7 @@
       (thing-at-point 'sexp))))
 
 (defun cargo-process--maybe-read-command (default)
-  "Prompt for the compilation command when the prefix argument is present.
+  "Prompt to modify the DEFAULT command when the prefix argument is present.
 Without the prefix argument, return DEFAULT immediately."
   (if current-prefix-arg
       (read-string "Cargo command: " default)
