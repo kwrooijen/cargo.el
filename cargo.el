@@ -3,7 +3,7 @@
 ;; Copyright (C) 2015  Kevin W. van Rooijen
 
 ;; Author: Kevin W. van Rooijen <kevin.van.rooijen@attichacker.com>
-;; Version  : 0.1.1
+;; Version  : 0.2.0
 ;; Keywords: tools
 ;; Package-Requires: ((emacs "24.3") (rust-mode "0.2.0"))
 
