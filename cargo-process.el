@@ -40,6 +40,7 @@
 ;;; Code:
 
 (require 'compile)
+(require 'button)
 
 (defgroup cargo-process nil
   "Cargo Process group."
@@ -77,6 +78,12 @@
   "Standard face"
   :group 'cargo-process)
 
+(defface cargo-process--errno-face
+  '((t :foreground "#7777ff"
+       :underline t))
+  "Error number face"
+  :group 'cargo-process)
+
 (defconst cargo-process-test-regexp "^[[:space:]]*fn[[:space:]]*"
   "Regex to find Rust unit test function.")
 
@@ -93,6 +100,15 @@
     ("test\s.*\sok" . 'cargo-process--ok-face))
   "Minimal highlighting expressions for cargo-process mode.")
 
+;; Bind `case-fold-search' to nil before using the regex.
+(defconst cargo-process--errno-regex "\\bE[0-9]\\{4\\}\\b"
+  "A regular expression to match Rust error number.")
+
+(define-button-type 'rustc-errno
+  'follow-link t
+  'face 'cargo-process--errno-face
+  'action #'cargo-process--explain-action)
+
 (define-derived-mode cargo-process-mode compilation-mode "Cargo-Process."
   "Major mode for the Cargo process buffer."
   (use-local-map cargo-process-mode-map)
@@ -100,6 +116,7 @@
   (setq mode-name "Cargo-Process")
   (setq-local truncate-lines t)
   (run-hooks 'cargo-process-mode-hook)
+  (add-hook 'compilation-filter-hook #'cargo-process--add-errno-buttons)
   (font-lock-add-keywords nil cargo-process-font-lock-keywords))
 
 (defun cargo-process--compilation-name (mode-name)
@@ -133,6 +150,34 @@
     (with-current-buffer "*Cargo Process*"
       (rename-buffer buffer))
     (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)))
+
+(defun cargo-process--explain-action (button)
+  "Action called when the user activates Rust errno BUTTON."
+  (cargo-process--explain-help (button-label button)))
+
+(defun cargo-process--explain-help (errno)
+  "Display a detailed explaination of ERRNO in the Help buffer."
+  (help-setup-xref (list #'cargo-process--explain-help errno)
+                   (called-interactively-p 'interactive))
+  (save-excursion
+    (with-help-window (help-buffer)
+      (princ (shell-command-to-string
+              (concat "rustc --explain=" errno)))
+      (with-current-buffer standard-output
+        (buffer-string)))))
+
+(defun cargo-process--add-errno-buttons ()
+  "Turn error numbers into clickable links in Cargo process output.
+Meant to be run as a `compilation-filter-hook'."
+  (save-excursion
+    (let ((start compilation-filter-start)
+          (end (point))
+          (case-fold-search nil))
+     (goto-char start)
+     (while (re-search-forward cargo-process--errno-regex end t)
+       (make-button (match-beginning 0)
+                    (match-end 0)
+                    :type 'rustc-errno)))))
 
 (defun cargo-process--get-current-test ()
   "Return the current test."
