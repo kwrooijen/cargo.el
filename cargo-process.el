@@ -200,6 +200,17 @@ Cargo: Create a new cargo project."
   (cargo-process--start "New" command))
 
 ;;;###autoload
+(defun cargo-process-init (command)
+  "Run the Cargo init COMMAND.
+With the prefix argument, modify the command's invocation.
+Cargo: Create a new cargo project in current directory."
+  (interactive
+   (let ((directory (read-directory-name "Directory: " nil default-directory t))
+         (bin (if (y-or-n-p "Create Bin Project? ") " --bin" "")))
+     (list (cargo-process--maybe-read-command (concat "cargo init " directory bin)))))
+  (cargo-process--start "Init" command))
+
+;;;###autoload
 (defun cargo-process-run (command)
   "Run the Cargo run COMMAND.
 With the prefix argument, modify the command's invocation.
