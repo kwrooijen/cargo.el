@@ -28,6 +28,7 @@
 ;;  * cargo-process-clean  - Remove the target directory.
 ;;  * cargo-process-doc    - Build this project's and its dependencies' documentation.
 ;;  * cargo-process-new    - Create a new cargo project.
+;;  * cargo-process-init   - Create a new cargo project inside an existing directory.
 ;;  * cargo-process-run    - Build and execute src/main.rs.
 ;;  * cargo-process-search - Search registry for crates.
 ;;  * cargo-process-test   - Run the tests.
