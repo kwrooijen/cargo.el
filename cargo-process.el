@@ -310,5 +310,8 @@ Cargo: Update dependencies listed in Cargo.lock."
       (apply 'cargo-process--start cargo-process-last-command)
     (message "No last Cargo command.")))
 
+(define-key cargo-process-mode-map (kbd "n") 'forward-button)
+(define-key cargo-process-mode-map (kbd "p") 'backward-button)
+
 (provide 'cargo-process)
 ;;; cargo-process.el ends here
