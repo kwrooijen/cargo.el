@@ -30,6 +30,7 @@
 ;;  * C-c C-c C-l - cargo-process-clean
 ;;  * C-c C-c C-d - cargo-process-doc
 ;;  * C-c C-c C-n - cargo-process-new
+;;  * C-c C-c C-i - cargo-process-init
 ;;  * C-c C-c C-r - cargo-process-run
 ;;  * C-c C-c C-s - cargo-process-search
 ;;  * C-c C-c C-t - cargo-process-test
@@ -60,6 +61,7 @@
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-l") 'cargo-process-clean)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-d") 'cargo-process-doc)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-n") 'cargo-process-new)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-i") 'cargo-process-init)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-r") 'cargo-process-run)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-s") 'cargo-process-search)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-t") 'cargo-process-test)

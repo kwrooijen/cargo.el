@@ -28,6 +28,7 @@
 ;;  * cargo-process-clean  - Remove the target directory.
 ;;  * cargo-process-doc    - Build this project's and its dependencies' documentation.
 ;;  * cargo-process-new    - Create a new cargo project.
+;;  * cargo-process-init   - Create a new cargo project inside an existing directory.
 ;;  * cargo-process-run    - Build and execute src/main.rs.
 ;;  * cargo-process-search - Search registry for crates.
 ;;  * cargo-process-test   - Run the tests.
@@ -243,6 +244,17 @@ Cargo: Create a new cargo project."
          (bin (if (y-or-n-p "Create Bin Project? ") " --bin" "")))
      (list (cargo-process--maybe-read-command (concat "cargo new " name bin)))))
   (cargo-process--start "New" command))
+
+;;;###autoload
+(defun cargo-process-init (command)
+  "Run the Cargo init COMMAND.
+With the prefix argument, modify the command's invocation.
+Cargo: Create a new cargo project in current directory."
+  (interactive
+   (let ((directory (read-directory-name "Directory: " nil default-directory t))
+         (bin (if (y-or-n-p "Create Bin Project? ") " --bin" "")))
+     (list (cargo-process--maybe-read-command (concat "cargo init " directory bin)))))
+  (cargo-process--start "Init" command))
 
 ;;;###autoload
 (defun cargo-process-run (command)
