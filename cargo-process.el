@@ -196,7 +196,7 @@ Meant to be run as a `compilation-filter-hook'."
   "Prompt to modify the DEFAULT command when the prefix argument is present.
 Without the prefix argument, return DEFAULT immediately."
   (if current-prefix-arg
-      (read-string "Cargo command: " default)
+      (read-shell-command "Cargo command: " default)
     default))
 
 ;;;###autoload
