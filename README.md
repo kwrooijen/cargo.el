@@ -38,4 +38,4 @@ You will now have the following key combinations at your disposal:
 
 Before executing the task, Emacs will prompt you to save any modified buffers
 associated with the current Cargo project. Setting `compilation-ask-about-save`
-to `nil` make Emacs save modified buffers without asking.
+to `nil` makes Emacs save modified buffers without asking.
