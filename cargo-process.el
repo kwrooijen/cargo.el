@@ -144,7 +144,8 @@
 
 (defun cargo-process--start (name command)
   "Start the Cargo process NAME with the cargo command COMMAND."
-  (let ((buffer (concat "*Cargo " name "*")))
+  (let ((buffer (concat "*Cargo " name "*"))
+        (command (cargo-process--maybe-read-command command)))
     (setq cargo-process-last-command (list name command))
     (cargo-process--cleanup buffer)
     (compilation-start command 'cargo-process-mode 'cargo-process--compilation-name)
@@ -195,124 +196,114 @@ Meant to be run as a `compilation-filter-hook'."
   "Prompt to modify the DEFAULT command when the prefix argument is present.
 Without the prefix argument, return DEFAULT immediately."
   (if current-prefix-arg
-      (read-string "Cargo command: " default)
+      (read-shell-command "Cargo command: " default)
     default))
 
 ;;;###autoload
-(defun cargo-process-bench (command)
-  "Run the Cargo bench COMMAND.
+(defun cargo-process-bench ()
+  "Run the Cargo bench command.
 With the prefix argument, modify the command's invocation.
 Cargo: Run the benchmarks."
-  (interactive
-   (list (cargo-process--maybe-read-command "cargo bench")))
-  (cargo-process--start "Bench" command))
+  (interactive)
+  (cargo-process--start "Bench" "cargo bench"))
 
 ;;;###autoload
-(defun cargo-process-build (command)
-  "Run the Cargo build COMMAND.
+(defun cargo-process-build ()
+  "Run the Cargo build command.
 With the prefix argument, modify the command's invocation.
 Cargo: Compile the current project."
-  (interactive
-   (list (cargo-process--maybe-read-command "cargo build")))
-  (cargo-process--start "Build" command))
+  (interactive)
+  (cargo-process--start "Build" "cargo build"))
 
 ;;;###autoload
-(defun cargo-process-clean (command)
-  "Run the Cargo clean COMMAND.
+(defun cargo-process-clean ()
+  "Run the Cargo clean command.
 With the prefix argument, modify the command's invocation.
 Cargo: Remove the target directory."
-  (interactive
-   (list (cargo-process--maybe-read-command "cargo clean")))
-  (cargo-process--start "Clean" command))
+  (interactive)
+  (cargo-process--start "Clean" "cargo clean"))
 
 ;;;###autoload
-(defun cargo-process-doc (command)
-  "Run the Cargo doc COMMAND.
+(defun cargo-process-doc ()
+  "Run the Cargo doc command.
 With the prefix argument, modify the command's invocation.
 Cargo: Build this project's and its dependencies' documentation."
-  (interactive
-   (list (cargo-process--maybe-read-command "cargo doc")))
-  (cargo-process--start "Doc" command))
+  (interactive)
+  (cargo-process--start "Doc" "cargo doc"))
 
 ;;;###autoload
-(defun cargo-process-new (command)
-  "Run the Cargo new COMMAND.
+(defun cargo-process-new (name &optional bin)
+  "Run the Cargo new command.
 With the prefix argument, modify the command's invocation.
+NAME is the name of your application.
+If BIN is t then create a binary application, otherwise a library.
 Cargo: Create a new cargo project."
-  (interactive
-   (let ((name (read-string "Project name: "))
-         (bin (if (y-or-n-p "Create Bin Project? ") " --bin" "")))
-     (list (cargo-process--maybe-read-command (concat "cargo new " name bin)))))
-  (cargo-process--start "New" command))
+  (interactive "sProject name: ")
+  (let ((bin (when (or bin (y-or-n-p "Create Bin Project? ")) " --bin")))
+    (cargo-process--start "New" (concat "cargo new " name bin))))
 
 ;;;###autoload
-(defun cargo-process-init (command)
-  "Run the Cargo init COMMAND.
+(defun cargo-process-init (directory &optional bin)
+  "Run the Cargo init command.
 With the prefix argument, modify the command's invocation.
+DIRECTORY is the directory you want to create a cargo project in.
+If BIN is t then create a binary application, otherwise a library.
 Cargo: Create a new cargo project in current directory."
   (interactive
-   (let ((directory (read-directory-name "Directory: " nil default-directory t))
-         (bin (if (y-or-n-p "Create Bin Project? ") " --bin" "")))
-     (list (cargo-process--maybe-read-command (concat "cargo init " directory bin)))))
-  (cargo-process--start "Init" command))
+   (list (read-directory-name "Directory: " nil default-directory t)))
+  (let ((bin (when (or bin (y-or-n-p "Create Bin Project? ")) " --bin")))
+    (cargo-process--start "Init" (concat "cargo init " directory bin))))
 
 ;;;###autoload
-(defun cargo-process-run (command)
-  "Run the Cargo run COMMAND.
+(defun cargo-process-run ()
+  "Run the Cargo run command.
 With the prefix argument, modify the command's invocation.
 Cargo: Build and execute src/main.rs."
-  (interactive
-   (list (cargo-process--maybe-read-command "cargo run")))
-  (cargo-process--start "Run" command))
+  (interactive)
+  (cargo-process--start "Run" "cargo run"))
 
 ;;;###autoload
-(defun cargo-process-search (command)
-  "Run the Cargo search COMMAND.
+(defun cargo-process-search (search-term)
+  "Run the Cargo search command.
 With the prefix argument, modify the command's invocation.
+SEARCH-TERM is used as the search term for the Cargo registry.
 Cargo: Search registry for crates."
-  (interactive
-   (let ((search-term (read-string "Search: ")))
-     (list (cargo-process--maybe-read-command (concat "cargo search " search-term)))))
-  (cargo-process--start "Search" command))
+  (interactive "sSearch: ")
+  (cargo-process--start "Search" (concat "cargo search " search-term)))
 
 ;;;###autoload
-(defun cargo-process-test (command)
-  "Run the Cargo test COMMAND.
+(defun cargo-process-test ()
+  "Run the Cargo test command.
 With the prefix argument, modify the command's invocation.
 Cargo: Run the tests."
-  (interactive
-   (list (cargo-process--maybe-read-command "cargo test")))
-  (cargo-process--start "Test" command))
+  (interactive)
+  (cargo-process--start "Test" "cargo test"))
 
 ;;;###autoload
-(defun cargo-process-current-test (command)
-  "Run the Cargo test COMMAND for the current test.
+(defun cargo-process-current-test ()
+  "Run the Cargo test command for the current test.
 With the prefix argument, modify the command's invocation.
 Cargo: Run the tests."
-  (interactive
-   (list (cargo-process--maybe-read-command
-          (format "cargo test --test %s %s"
-                  (file-name-base) (cargo-process--get-current-test)))))
-  (cargo-process--start "Test" command))
+  (interactive)
+  (cargo-process--start "Test" (format "cargo test --test %s %s"
+                                       (file-name-base)
+                                       (cargo-process--get-current-test))))
 
 ;;;###autoload
-(defun cargo-process-current-file-tests (command)
-  "Run the Cargo test COMMAND for the current file.
+(defun cargo-process-current-file-tests ()
+  "Run the Cargo test command for the current file.
 With the prefix argument, modify the command's invocation.
 Cargo: Run the tests."
-  (interactive
-   (list (cargo-process--maybe-read-command
-          (concat "cargo test --test " (file-name-base)))))
-  (cargo-process--start "Test" command))
+  (interactive)
+  (cargo-process--start "Test" (concat "cargo test --test " (file-name-base))))
 
 ;;;###autoload
-(defun cargo-process-update (command)
-  "Run the Cargo update COMMAND.
+(defun cargo-process-update ()
+  "Run the Cargo update command.
 With the prefix argument, modify the command's invocation.
 Cargo: Update dependencies listed in Cargo.lock."
-  (interactive
-   (list (cargo-process--maybe-read-command "cargo update")))
-  (cargo-process--start "Update" command))
+  (interactive)
+  (cargo-process--start "Update" "cargo update"))
 
 ;;;###autoload
 (defun cargo-process-repeat ()
