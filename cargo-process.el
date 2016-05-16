@@ -110,6 +110,11 @@
   'face 'cargo-process--errno-face
   'action #'cargo-process--explain-action)
 
+(defun cargo-process--project-root ()
+  "Find the root of the current Cargo project."
+  (let ((root (locate-dominating-file (or buffer-file-name default-directory) "Cargo.toml")))
+    (and root (file-truename root))))
+
 (define-derived-mode cargo-process-mode compilation-mode "Cargo-Process."
   "Major mode for the Cargo process buffer."
   (use-local-map cargo-process-mode-map)
@@ -145,7 +150,13 @@
 (defun cargo-process--start (name command)
   "Start the Cargo process NAME with the cargo command COMMAND."
   (let ((buffer (concat "*Cargo " name "*"))
-        (command (cargo-process--maybe-read-command command)))
+        (command (cargo-process--maybe-read-command command))
+        (project-root (cargo-process--project-root)))
+    (save-some-buffers (not compilation-ask-about-save)
+                       (lambda ()
+                         (and project-root
+                              buffer-file-name
+                              (string-prefix-p project-root (file-truename buffer-file-name)))))
     (setq cargo-process-last-command (list name command))
     (cargo-process--cleanup buffer)
     (compilation-start command 'cargo-process-mode 'cargo-process--compilation-name)
