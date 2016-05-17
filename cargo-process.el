@@ -23,19 +23,20 @@
 ;; Cargo Process Major mode.
 ;; Used to run Cargo background processes.
 ;; Current supported Cargo functions:
-;;  * cargo-process-bench  - Run the benchmarks.
-;;  * cargo-process-build  - Compile the current project.
-;;  * cargo-process-clean  - Remove the target directory.
-;;  * cargo-process-doc    - Build this project's and its dependencies' documentation.
-;;  * cargo-process-new    - Create a new cargo project.
-;;  * cargo-process-init   - Create a new cargo project inside an existing directory.
-;;  * cargo-process-run    - Build and execute src/main.rs.
-;;  * cargo-process-search - Search registry for crates.
-;;  * cargo-process-test   - Run the tests.
-;;  * cargo-process-update - Update dependencies listed in Cargo.lock.
-;;  * cargo-process-repeat - Run the last cargo-process command.
-;;  * cargo-process-current-test         - Run the current unit test.
-;;  * cargo-process-current-file-tests   -  the current file unit tests.
+;;  * cargo-process-bench              - Run the benchmarks.
+;;  * cargo-process-build              - Compile the current project.
+;;  * cargo-process-clean              - Remove the target directory.
+;;  * cargo-process-doc                - Build this project's and its dependencies' documentation.
+;;  * cargo-process-new                - Create a new cargo project.
+;;  * cargo-process-init               - Create a new cargo project inside an existing directory.
+;;  * cargo-process-run                - Build and execute src/main.rs.
+;;  * cargo-process-run-example        - Build and execute with --example <name>.
+;;  * cargo-process-search             - Search registry for crates.
+;;  * cargo-process-test               - Run all unit tests.
+;;  * cargo-process-update             - Update dependencies listed in Cargo.lock.
+;;  * cargo-process-repeat             - Run the last cargo-process command.
+;;  * cargo-process-current-test       - Run the current unit test.
+;;  * cargo-process-current-file-tests - Run the current file unit tests.
 
 ;;
 ;;; Code:
@@ -272,6 +273,15 @@ With the prefix argument, modify the command's invocation.
 Cargo: Build and execute src/main.rs."
   (interactive)
   (cargo-process--start "Run" "cargo run"))
+
+;;;###autoload
+(defun cargo-process-run-example (command)
+  "Run the Cargo run command --example <name>.
+With the prefix argument, modify the command's invocation.
+Cargo: Build and execute with --example <name>."
+  (interactive "sExample name: ")
+  (cargo-process--start (concat "Example " command)
+                        (concat "cargo run --example " command)))
 
 ;;;###autoload
 (defun cargo-process-search (search-term)

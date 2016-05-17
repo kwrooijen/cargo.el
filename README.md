@@ -29,6 +29,7 @@ You will now have the following key combinations at your disposal:
  <kbd>C-c C-c C-n</kbd> | cargo-process-new
  <kbd>C-c C-c C-i</kbd> | cargo-process-init
  <kbd>C-c C-c C-r</kbd> | cargo-process-run
+ <kbd>C-c C-c C-x</kbd> | cargo-process-run-example
  <kbd>C-c C-c C-s</kbd> | cargo-process-search
  <kbd>C-c C-c C-t</kbd> | cargo-process-test
  <kbd>C-c C-c C-u</kbd> | cargo-process-update
