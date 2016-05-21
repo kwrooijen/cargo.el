@@ -43,6 +43,7 @@
 
 (require 'compile)
 (require 'button)
+(require 'rust-mode)
 
 (defgroup cargo-process nil
   "Cargo Process group."
