@@ -133,6 +133,7 @@
 
 (defun cargo-process--finished-sentinel (process event)
   "Execute after PROCESS return and EVENT is 'finished'."
+  (compilation-sentinel process event)
   (when (equal event "finished\n")
     (message "Cargo Process finished.")))
 
