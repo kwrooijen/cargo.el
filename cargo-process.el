@@ -140,9 +140,7 @@
 (defun cargo-process--cleanup (buffer)
   "Clean up the old Cargo process BUFFER when a similar process is run."
   (when (get-buffer-process (get-buffer buffer))
-    (delete-process buffer))
-  (when (get-buffer buffer)
-    (kill-buffer buffer)))
+    (delete-process buffer)))
 
 (defun cargo-process--activate-mode (buffer)
   "Execute commands BUFFER at process start."
