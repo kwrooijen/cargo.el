@@ -37,6 +37,7 @@
 ;;  * cargo-process-repeat             - Run the last cargo-process command.
 ;;  * cargo-process-current-test       - Run the current unit test.
 ;;  * cargo-process-current-file-tests - Run the current file unit tests.
+;;  * cargo-process-fmt                - Run the optional cargo command fmt.
 
 ;;
 ;;; Code:
@@ -325,6 +326,14 @@ With the prefix argument, modify the command's invocation.
 Cargo: Update dependencies listed in Cargo.lock."
   (interactive)
   (cargo-process--start "Update" "cargo update"))
+
+;;;###autoload
+(defun cargo-process-fmt ()
+  "Run the Cargo fmt command.
+With the prefix argument, modify the command's invocation.
+Requires Cargo Fmt to be installed."
+  (interactive)
+  (cargo-process--start "Fmt" "cargo fmt"))
 
 ;;;###autoload
 (defun cargo-process-repeat ()
