@@ -38,6 +38,7 @@
 ;;  * cargo-process-current-test       - Run the current unit test.
 ;;  * cargo-process-current-file-tests - Run the current file unit tests.
 ;;  * cargo-process-fmt                - Run the optional cargo command fmt.
+;;  * cargo-process-check              - Run the optional cargo command check.
 
 ;;
 ;;; Code:
@@ -334,6 +335,15 @@ With the prefix argument, modify the command's invocation.
 Requires Cargo Fmt to be installed."
   (interactive)
   (cargo-process--start "Fmt" "cargo fmt"))
+
+;;;###autoload
+(defun cargo-process-check ()
+  "Run the Cargo check command.
+With the prefix argument, modify the command's invocation.
+Cargo: Check compile the current project.
+Requires cargo-check to be installed."
+  (interactive)
+  (cargo-process--start "Check" "cargo check"))
 
 ;;;###autoload
 (defun cargo-process-repeat ()

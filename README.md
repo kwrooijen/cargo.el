@@ -37,6 +37,7 @@ You will now have the following key combinations at your disposal:
  <kbd>C-c C-c C-f</kbd> | cargo-process-current-test
  <kbd>C-c C-c C-o</kbd> | cargo-process-current-file-tests
  <kbd>C-c C-c C-m</kbd> | cargo-process-fmt
+ <kbd>C-c C-c C-k</kbd> | cargo-process-check
 
 Before executing the task, Emacs will prompt you to save any modified buffers
 associated with the current Cargo project. Setting `compilation-ask-about-save`
@@ -49,4 +50,10 @@ In order to run `cargo-process-fmt` you need to have the `rustfmt` package insta
 
 ```
 cargo install rustfmt
+```
+
+In order to run `cargo-process-check` you need to have the `cargo-check` package installed.
+
+```
+cargo install cargo-check
 ```
