@@ -129,20 +129,11 @@
   (add-hook 'compilation-filter-hook #'cargo-process--add-errno-buttons)
   (font-lock-add-keywords nil cargo-process-font-lock-keywords))
 
-(defun cargo-process--compilation-name (mode-name)
-  "Name of the Cargo Process.  MODE-NAME is unused."
-  "*Cargo Process*")
-
 (defun cargo-process--finished-sentinel (process event)
   "Execute after PROCESS return and EVENT is 'finished'."
   (compilation-sentinel process event)
   (when (equal event "finished\n")
     (message "Cargo Process finished.")))
-
-(defun cargo-process--cleanup (buffer)
-  "Clean up the old Cargo process BUFFER when a similar process is run."
-  (when (get-buffer-process (get-buffer buffer))
-    (delete-process buffer)))
 
 (defun cargo-process--activate-mode (buffer)
   "Execute commands BUFFER at process start."
@@ -161,10 +152,7 @@
                               buffer-file-name
                               (string-prefix-p project-root (file-truename buffer-file-name)))))
     (setq cargo-process-last-command (list name command))
-    (cargo-process--cleanup buffer)
-    (compilation-start command 'cargo-process-mode 'cargo-process--compilation-name)
-    (with-current-buffer "*Cargo Process*"
-      (rename-buffer buffer))
+    (compilation-start command 'cargo-process-mode (lambda(_) buffer))
     (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)))
 
 (defun cargo-process--explain-action (button)
