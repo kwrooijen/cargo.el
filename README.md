@@ -38,6 +38,7 @@ You will now have the following key combinations at your disposal:
  <kbd>C-c C-c C-o</kbd> | cargo-process-current-file-tests
  <kbd>C-c C-c C-m</kbd> | cargo-process-fmt
  <kbd>C-c C-c C-k</kbd> | cargo-process-check
+ <kbd>C-c C-c C-K</kbd> | cargo-process-clippy
 
 Before executing the task, Emacs will prompt you to save any modified buffers
 associated with the current Cargo project. Setting `compilation-ask-about-save`
@@ -56,4 +57,10 @@ In order to run `cargo-process-check` you need to have the `cargo-check` package
 
 ```
 cargo install cargo-check
+```
+
+In order to run `cargo-process-clippy` you need to have the `clippy` package installed.
+
+```
+cargo install clippy
 ```

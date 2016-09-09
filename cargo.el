@@ -41,6 +41,7 @@
 ;;  * C-c C-c C-o - cargo-process-current-file-tests
 ;;  * C-c C-c C-m - cargo-process-fmt
 ;;  * C-c C-c C-k - cargo-process-check
+;;  * C-c C-c C-K - cargo-process-clippy
 
 ;;
 ;;; Code:
@@ -76,6 +77,7 @@
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-o") 'cargo-process-current-file-tests)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-m") 'cargo-process-fmt)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-k") 'cargo-process-check)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-K") 'cargo-process-clippy)
 
 (provide 'cargo)
 ;;; cargo.el ends here
