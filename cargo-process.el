@@ -39,6 +39,7 @@
 ;;  * cargo-process-current-file-tests - Run the current file unit tests.
 ;;  * cargo-process-fmt                - Run the optional cargo command fmt.
 ;;  * cargo-process-check              - Run the optional cargo command check.
+;;  * cargo-process-clippy             - Run the optional cargo command clippy.
 
 ;;
 ;;; Code:
@@ -332,6 +333,15 @@ Cargo: Check compile the current project.
 Requires cargo-check to be installed."
   (interactive)
   (cargo-process--start "Check" "cargo check"))
+
+;;;###autoload
+(defun cargo-process-clippy ()
+  "Run the Cargo clippy command.
+With the prefix argument, modify the command's invocation.
+Cargo: Clippy compile the current project.
+Requires Cargo clippy to be installed."
+  (interactive)
+  (cargo-process--start "Clippy" "cargo clippy"))
 
 ;;;###autoload
 (defun cargo-process-repeat ()
