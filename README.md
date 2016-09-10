@@ -38,7 +38,7 @@ You will now have the following key combinations at your disposal:
  <kbd>C-c C-c C-o</kbd> | cargo-process-current-file-tests
  <kbd>C-c C-c C-m</kbd> | cargo-process-fmt
  <kbd>C-c C-c C-k</kbd> | cargo-process-check
- <kbd>C-c C-c C-K</kbd> | cargo-process-clippy
+ <kbd>C-c C-c C-S-k</kbd> | cargo-process-clippy
 
 Before executing the task, Emacs will prompt you to save any modified buffers
 associated with the current Cargo project. Setting `compilation-ask-about-save`
