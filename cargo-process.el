@@ -1,4 +1,4 @@
-;;; cargo-process.el --- Cargo Process Major Mode
+;;; cargo-process.el --- Cargo Process Major Mode -*-lexical-binding: t-*-
 
 ;; Copyright (C) 2015  Kevin W. van Rooijen
 
