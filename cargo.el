@@ -45,7 +45,8 @@
 
 ;;
 ;;; Code:
-
+(eval-when-compile
+  (require 'cl-lib))
 (require 'cargo-process)
 
 (defgroup cargo nil
@@ -53,31 +54,49 @@
   :prefix "cargo-"
   :group 'tools)
 
-(defvar cargo-minor-mode-map (make-keymap) "Cargo-mode keymap.")
-(defvar cargo-minor-mode nil)
+(defcustom cargo-prefix-key "C-c C-c"
+  "Prefix key for `cargo-minor-mode-map'."
+  :group 'cargo
+  :type 'string)
+
+(defvar cargo-bindings
+  '(("C-e" . cargo-process-bench)
+    ("C-b" . cargo-process-build)
+    ("C-l" . cargo-process-clean)
+    ("C-d" . cargo-process-doc)
+    ("C-n" . cargo-process-new)
+    ("C-i" . cargo-process-init)
+    ("C-r" . cargo-process-run)
+    ("C-x" . cargo-process-run-example)
+    ("C-s" . cargo-process-search)
+    ("C-t" . cargo-process-test)
+    ("C-u" . cargo-process-update)
+    ("C-c" . cargo-process-repeat)
+    ("C-f" . cargo-process-current-test)
+    ("C-o" . cargo-process-current-file-tests)
+    ("C-m" . cargo-process-fmt)
+    ("C-k" . cargo-process-check)
+    ("C-S-k" . cargo-process-clippy)))
+
+;; add bindings to keymap / create menu
+(defun cargo--populate-menu (bindings)
+  (let ((cargo-menu
+         `("cargo"
+          ,@(cl-loop for (key . fn) in bindings
+               collect (vector (symbol-name fn) fn t)))))
+    (define-key cargo-minor-mode-map (kbd cargo-prefix-key) nil)
+    (cl-loop for (key . fn) in bindings
+       do (define-key cargo-minor-mode-map
+            (kbd (concat cargo-prefix-key " " key)) fn))
+    (easy-menu-define nil cargo-minor-mode-map nil cargo-menu)))
+
+(defvar cargo-minor-mode-map (make-sparse-keymap) "Cargo-mode keymap.")
 
 ;;;###autoload
 (define-minor-mode cargo-minor-mode
   "Cargo minor mode. Used to hold keybindings for cargo-mode"
-  nil "cargo" cargo-minor-mode-map)
-
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-e") 'cargo-process-bench)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-b") 'cargo-process-build)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-l") 'cargo-process-clean)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-d") 'cargo-process-doc)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-n") 'cargo-process-new)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-i") 'cargo-process-init)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-r") 'cargo-process-run)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-x") 'cargo-process-run-example)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-s") 'cargo-process-search)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-t") 'cargo-process-test)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-u") 'cargo-process-update)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-c") 'cargo-process-repeat)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-f") 'cargo-process-current-test)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-o") 'cargo-process-current-file-tests)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-m") 'cargo-process-fmt)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-k") 'cargo-process-check)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-S-k") 'cargo-process-clippy)
+  nil " cargo" cargo-minor-mode-map
+  (cargo--populate-menu cargo-bindings))
 
 (provide 'cargo)
 ;;; cargo.el ends here
