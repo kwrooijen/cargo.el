@@ -297,7 +297,7 @@ Cargo: Run the tests."
 With the prefix argument, modify the command's invocation.
 Cargo: Run the tests."
   (interactive)
-  (cargo-process--start "Test" (format "cargo test --test %s %s"
+  (cargo-process--start "Test" (format "cargo test %s::%s"
                                        (file-name-base)
                                        (cargo-process--get-current-test))))
 
@@ -307,7 +307,7 @@ Cargo: Run the tests."
 With the prefix argument, modify the command's invocation.
 Cargo: Run the tests."
   (interactive)
-  (cargo-process--start "Test" (concat "cargo test --test " (file-name-base))))
+  (cargo-process--start "Test" (concat "cargo test " (file-name-base))))
 
 ;;;###autoload
 (defun cargo-process-update ()
