@@ -53,6 +53,11 @@
   :prefix "cargo-process-"
   :group 'cargo)
 
+(defcustom cargo-process--custom-path-to-bin ""
+  "Custom path to the directory containing the cargo executable"
+  :type 'directory
+  :group 'cargo-process)
+
 (defvar cargo-process-mode-map
   (nconc (make-sparse-keymap) compilation-mode-map)
   "Keymap for Cargo major mode.")
@@ -145,7 +150,12 @@
 (defun cargo-process--start (name command)
   "Start the Cargo process NAME with the cargo command COMMAND."
   (let ((buffer (concat "*Cargo " name "*"))
-        (command (cargo-process--maybe-read-command command))
+        (command (cargo-process--maybe-read-command
+                  (if (string= cargo-process--custom-path-to-bin "")
+                      command
+                    (concat (file-name-as-directory
+                             cargo-process--custom-path-to-bin)
+                            command))))
         (project-root (cargo-process--project-root)))
     (save-some-buffers (not compilation-ask-about-save)
                        (lambda ()
