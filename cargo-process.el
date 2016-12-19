@@ -150,10 +150,11 @@
 (defun cargo-process--start (name command)
   "Start the Cargo process NAME with the cargo command COMMAND."
   (let* ((buffer (concat "*Cargo " name "*"))
+         (project-root (cargo-process--project-root))
          (path cargo-process--custom-path-to-bin)
          (path (and path (file-name-as-directory path)))
-         (command (cargo-process--maybe-read-command (concat path command)))
-         (project-root (cargo-process--project-root)))
+         (command (cargo-process--maybe-read-command
+                   (concat "cd " project-root " && " path command))))
     (save-some-buffers (not compilation-ask-about-save)
                        (lambda ()
                          (and project-root
