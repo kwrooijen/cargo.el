@@ -153,7 +153,8 @@
          (path cargo-process--custom-path-to-bin)
          (path (and path (file-name-as-directory path)))
          (command (cargo-process--maybe-read-command (concat path command)))
-         (project-root (cargo-process--project-root)))
+         (project-root (cargo-process--project-root))
+         (default-directory (or project-root default-directory)))
     (save-some-buffers (not compilation-ask-about-save)
                        (lambda ()
                          (and project-root
