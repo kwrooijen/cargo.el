@@ -44,6 +44,17 @@ Before executing the task, Emacs will prompt you to save any modified buffers
 associated with the current Cargo project. Setting `compilation-ask-about-save`
 to `nil` makes Emacs save modified buffers without asking.
 
+### Advanced usage
+
+If you invoke the prefix argument <kbd>C-u</kbd> before calling any of
+the functions, you may edit the Cargo command before it is run. This
+allows you to add flags like `--release`, for example.
+
+Processes run via Cargo mode make use of [compilation mode][]. This
+mode provides features like jumping to errors or killing runaway
+processes.
+
+[compilation mode]: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation-Mode.html
 
 ## Notes
 
