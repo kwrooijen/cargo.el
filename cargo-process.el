@@ -27,6 +27,7 @@
 ;;  * cargo-process-build              - Compile the current project.
 ;;  * cargo-process-clean              - Remove the target directory.
 ;;  * cargo-process-doc                - Build this project's and its dependencies' documentation.
+;;  * cargo-process-doc-open           - Open this project's documentation.
 ;;  * cargo-process-new                - Create a new cargo project.
 ;;  * cargo-process-init               - Create a new cargo project inside an existing directory.
 ;;  * cargo-process-run                - Build and execute src/main.rs.
@@ -241,6 +242,14 @@ With the prefix argument, modify the command's invocation.
 Cargo: Build this project's and its dependencies' documentation."
   (interactive)
   (cargo-process--start "Doc" "cargo doc"))
+
+;;;###autoload
+(defun cargo-process-doc-open ()
+  "Run the Cargo doc command with the --open switch.
+With the prefix argument, modify the command's invocation.
+Cargo: Open this project's documentation."
+  (interactive)
+  (cargo-process--start "Doc" "cargo doc --open"))
 
 ;;;###autoload
 (defun cargo-process-new (name &optional bin)
