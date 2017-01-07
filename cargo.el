@@ -60,7 +60,7 @@
 ;;;###autoload
 (define-minor-mode cargo-minor-mode
   "Cargo minor mode. Used to hold keybindings for cargo-mode"
-  nil "cargo" cargo-minor-mode-map)
+  nil " cargo" cargo-minor-mode-map)
 
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-e") 'cargo-process-bench)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-b") 'cargo-process-build)
