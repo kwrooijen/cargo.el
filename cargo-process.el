@@ -283,6 +283,15 @@ Cargo: Build and execute src/main.rs."
   (cargo-process--start "Run" "cargo run"))
 
 ;;;###autoload
+(defun cargo-process-run-bin (command)
+  "Run the Cargo run command --bin <name>.
+With the prefix argument, modify the command's invocation.
+Cargo: Build and execute with --example <name>."
+  (interactive)
+  (cargo-process--start (concat "Run " command) 
+                        (concat "cargo run --bin " command)))
+
+;;;###autoload
 (defun cargo-process-run-example (command)
   "Run the Cargo run command --example <name>.
 With the prefix argument, modify the command's invocation.
