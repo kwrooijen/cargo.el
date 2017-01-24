@@ -32,6 +32,7 @@
 ;;  * cargo-process-init               - Create a new cargo project inside an existing directory.
 ;;  * cargo-process-run                - Build and execute src/main.rs.
 ;;  * cargo-process-run-example        - Build and execute with --example <name>.
+;;  * cargo-process-run-bin            - Build and execute a specific binary.
 ;;  * cargo-process-search             - Search registry for crates.
 ;;  * cargo-process-test               - Run all unit tests.
 ;;  * cargo-process-update             - Update dependencies listed in Cargo.lock.
@@ -286,7 +287,7 @@ Cargo: Build and execute src/main.rs."
 (defun cargo-process-run-bin (command)
   "Run the Cargo run command --bin <name>.
 With the prefix argument, modify the command's invocation.
-Cargo: Build and execute with --example <name>."
+Cargo: Build and execute a specific binary"
   (interactive)
   (cargo-process--start (concat "Run " command) 
                         (concat "cargo run --bin " command)))
