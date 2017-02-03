@@ -26,6 +26,7 @@ You will now have the following key combinations at your disposal:
  <kbd>C-c C-c C-b</kbd> | cargo-process-build
  <kbd>C-c C-c C-l</kbd> | cargo-process-clean
  <kbd>C-c C-c C-d</kbd> | cargo-process-doc
+ <kbd>C-c C-c C-v</kbd> | cargo-process-doc-open
  <kbd>C-c C-c C-n</kbd> | cargo-process-new
  <kbd>C-c C-c C-i</kbd> | cargo-process-init
  <kbd>C-c C-c C-r</kbd> | cargo-process-run

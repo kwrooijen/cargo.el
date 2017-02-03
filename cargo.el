@@ -3,7 +3,7 @@
 ;; Copyright (C) 2015  Kevin W. van Rooijen
 
 ;; Author: Kevin W. van Rooijen <kevin.van.rooijen@attichacker.com>
-;; Version  : 0.3.0
+;; Version  : 0.4.0
 ;; Keywords: tools
 ;; Package-Requires: ((emacs "24.3") (rust-mode "0.2.0"))
 
@@ -29,7 +29,7 @@
 ;;  * C-c C-c C-b - cargo-process-build
 ;;  * C-c C-c C-l - cargo-process-clean
 ;;  * C-c C-c C-d - cargo-process-doc
-;;  * C-c C-c C-h - cargo-process-doc-open
+;;  * C-c C-c C-v - cargo-process-doc-open
 ;;  * C-c C-c C-n - cargo-process-new
 ;;  * C-c C-c C-i - cargo-process-init
 ;;  * C-c C-c C-r - cargo-process-run
@@ -66,7 +66,7 @@
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-b") 'cargo-process-build)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-l") 'cargo-process-clean)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-d") 'cargo-process-doc)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-h") 'cargo-process-doc-open)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-v") 'cargo-process-doc-open)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-n") 'cargo-process-new)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-i") 'cargo-process-init)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-r") 'cargo-process-run)
