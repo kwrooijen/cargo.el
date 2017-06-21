@@ -288,8 +288,8 @@ Cargo: Build and execute src/main.rs."
   "Run the Cargo run command --bin <name>.
 With the prefix argument, modify the command's invocation.
 Cargo: Build and execute a specific binary"
-  (interactive)
-  (cargo-process--start (concat "Run " command) 
+  (interactive "sBinary name: ")
+  (cargo-process--start (concat "Run " command)
                         (concat "cargo run --bin " command)))
 
 ;;;###autoload
