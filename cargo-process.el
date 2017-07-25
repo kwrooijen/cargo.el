@@ -60,6 +60,12 @@
   :type 'directory
   :group 'cargo-process)
 
+(defcustom cargo-process--enable-rust-backtrace nil
+  "Set RUST_BACKTRACE environment variable to 1 for tasks test and run"
+  :group 'cargo-process)
+
+(defvar cargo-process--rust-backtrace "RUST_BACKTRACE")
+
 (defvar cargo-process-mode-map
   (nconc (make-sparse-keymap) compilation-mode-map)
   "Keymap for Cargo major mode.")
@@ -149,8 +155,17 @@
     (funcall 'cargo-process-mode)
     (setq-local window-point-insertion-type t)))
 
+(defun set-rust-backtrace (command)
+  "Set RUST_BACKTRACE variable depending on the COMMAND used.
+Always set to nil if cargo-process--enable-rust-backtrace is nil"
+  (when cargo-process--enable-rust-backtrace
+    (if (string-match "cargo \\(test\\|run\\)" "cargo run")
+        (setenv cargo-process--rust-backtrace "1")
+      (setenv cargo-process--rust-backtrace nil))))
+
 (defun cargo-process--start (name command)
   "Start the Cargo process NAME with the cargo command COMMAND."
+  (set-rust-backtrace command)
   (let* ((buffer (concat "*Cargo " name "*"))
          (path cargo-process--custom-path-to-bin)
          (path (and path (file-name-as-directory path)))
