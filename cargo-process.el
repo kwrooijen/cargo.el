@@ -64,8 +64,6 @@
   "Set RUST_BACKTRACE environment variable to 1 for tasks test and run"
   :group 'cargo-process)
 
-(defvar cargo-process--rust-backtrace "RUST_BACKTRACE")
-
 (defvar cargo-process-mode-map
   (nconc (make-sparse-keymap) compilation-mode-map)
   "Keymap for Cargo major mode.")
@@ -103,8 +101,12 @@
   "Error number face"
   :group 'cargo-process)
 
+(defconst cargo-process--rust-backtrace "RUST_BACKTRACE")
+
 (defconst cargo-process-test-regexp "^[[:space:]]*fn[[:space:]]*"
   "Regex to find Rust unit test function.")
+
+(defconst cargo-process-test-mod-regexp "^[[:space:]]*mod[[:space:]]*\\w+[[:space:]]*{")
 
 (defconst cargo-process-font-lock-keywords
   '(("error\\:" . 'cargo-process--error-face)
@@ -218,7 +220,20 @@ Meant to be run as a `compilation-filter-hook'."
                    (save-excursion (rust-end-of-defun) (< start (point))))
         (error "Unable to find test"))
       (search-forward "fn ")
-      (thing-at-point 'sexp))))
+      (thing-at-point 'sexp t))))
+
+(defun cargo-process--get-current-mod ()
+  "Return the current mod."
+  (save-excursion
+    (when (search-backward-regexp cargo-process-test-mod-regexp nil t)
+      (let* ((line (buffer-substring-no-properties (line-beginning-position)
+                                                   (line-end-position)))
+             (lines (split-string line " "))
+             (mod (cadr lines)))
+        mod))))
+
+(defun cargo-process--get-current-test-fullname ()
+  (concat (cargo-process--get-current-mod) "::" (cargo-process--get-current-test)))
 
 (defun cargo-process--maybe-read-command (default)
   "Prompt to modify the DEFAULT command when the prefix argument is present.
@@ -339,9 +354,8 @@ Cargo: Run the tests."
 With the prefix argument, modify the command's invocation.
 Cargo: Run the tests."
   (interactive)
-  (cargo-process--start "Test" (format "cargo test %s::%s"
-                                       (file-name-base)
-                                       (cargo-process--get-current-test))))
+  (cargo-process--start "Test" (format "cargo test %s"
+                                       (cargo-process--get-current-test-fullname))))
 
 ;;;###autoload
 (defun cargo-process-current-file-tests ()
@@ -349,7 +363,8 @@ Cargo: Run the tests."
 With the prefix argument, modify the command's invocation.
 Cargo: Run the tests."
   (interactive)
-  (cargo-process--start "Test" (concat "cargo test " (file-name-base))))
+  (cargo-process--start "Test" (format "cargo test %s"
+                                       (cargo-process--get-current-mod))))
 
 ;;;###autoload
 (defun cargo-process-update ()
