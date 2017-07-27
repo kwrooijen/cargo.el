@@ -109,8 +109,8 @@
 (defconst cargo-process-test-mod-regexp "^[[:space:]]*mod[[:space:]]*\\w+[[:space:]]*{")
 
 (defconst cargo-process-font-lock-keywords
-  '(("error\\:" . 'cargo-process--error-face)
-    ("warning\\:" . 'cargo-process--warning-face)
+  '(("^error\\:?" . 'cargo-process--error-face)
+    ("^warning\\:?" . 'cargo-process--warning-face)
     ("^\s*\\^\\~*\s*$" . 'cargo-process--pointer-face)
     ("^\s*Compiling.*" . 'cargo-process--standard-face)
     ("^\s*Running.*" . 'cargo-process--standard-face)
