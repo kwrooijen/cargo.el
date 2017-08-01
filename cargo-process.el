@@ -233,7 +233,11 @@ Meant to be run as a `compilation-filter-hook'."
         mod))))
 
 (defun cargo-process--get-current-test-fullname ()
-  (concat (cargo-process--get-current-mod) "::" (cargo-process--get-current-test)))
+  (if (cargo-process--get-current-mod)
+      (concat (cargo-process--get-current-mod)
+              "::"
+              (cargo-process--get-current-test))
+    (cargo-process--get-current-test)))
 
 (defun cargo-process--maybe-read-command (default)
   "Prompt to modify the DEFAULT command when the prefix argument is present.
@@ -363,7 +367,7 @@ Cargo: Run the tests."
 With the prefix argument, modify the command's invocation.
 Cargo: Run the tests."
   (interactive)
-  (cargo-process--start "Test" (format "cargo test %s"
+  (cargo-process--start "Test" (concat "cargo test "
                                        (cargo-process--get-current-mod))))
 
 ;;;###autoload
