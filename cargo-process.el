@@ -130,6 +130,11 @@
   'face 'cargo-process--errno-face
   'action #'cargo-process--explain-action)
 
+(defun cargo-process--defun-at-point-p ()
+  (string-match cargo-process-test-regexp
+                (buffer-substring-no-properties (line-beginning-position)
+                                                (line-end-position))))
+
 (defun cargo-process--project-root ()
   "Find the root of the current Cargo project."
   (let ((root (locate-dominating-file (or buffer-file-name default-directory) "Cargo.toml")))
@@ -213,14 +218,16 @@ Meant to be run as a `compilation-filter-hook'."
 
 (defun cargo-process--get-current-test ()
   "Return the current test."
-  (let ((start (point)))
-    (save-excursion
-      (end-of-line)
-      (unless (and (search-backward-regexp cargo-process-test-regexp nil t)
-                   (save-excursion (rust-end-of-defun) (< start (point))))
-        (error "Unable to find test"))
-      (search-forward "fn ")
-      (thing-at-point 'sexp t))))
+  (save-excursion
+    (unless (cargo-process--defun-at-point-p)
+      (rust-beginning-of-defun))
+    (beginning-of-line)
+    (search-forward "fn ")
+    (let* ((line (buffer-substring-no-properties (point)
+                                                 (line-end-position)))
+           (lines (split-string line "("))
+           (function-name (car lines)))
+      function-name)))
 
 (defun cargo-process--get-current-mod ()
   "Return the current mod."
@@ -228,6 +235,7 @@ Meant to be run as a `compilation-filter-hook'."
     (when (search-backward-regexp cargo-process-test-mod-regexp nil t)
       (let* ((line (buffer-substring-no-properties (line-beginning-position)
                                                    (line-end-position)))
+             (line (string-trim-left line))
              (lines (split-string line " "))
              (mod (cadr lines)))
         mod))))
