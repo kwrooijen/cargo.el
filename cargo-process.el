@@ -64,6 +64,10 @@
   "Set RUST_BACKTRACE environment variable to 1 for tasks test and run"
   :group 'cargo-process)
 
+(defcustom cargo-process--command-flags ""
+  "Flags to be added to every cargo command when run."
+  :group 'cargo-process)
+
 (defvar cargo-process-mode-map
   (nconc (make-sparse-keymap) compilation-mode-map)
   "Keymap for Cargo major mode.")
@@ -212,7 +216,8 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
   (let* ((buffer (concat "*Cargo " name "*"))
          (path cargo-process--custom-path-to-bin)
          (path (and path (file-name-as-directory path)))
-         (command (cargo-process--maybe-read-command (concat path command)))
+         (command (cargo-process--maybe-read-command
+                   (concat path command " " cargo-process--command-flags)))
          (project-root (cargo-process--project-root))
          (default-directory (or project-root default-directory)))
     (save-some-buffers (not compilation-ask-about-save)
