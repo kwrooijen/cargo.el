@@ -60,6 +60,11 @@
   :type 'directory
   :group 'cargo-process)
 
+(defcustom cargo-process--command-name "cargo"
+  "Custom name of the cargo executable"
+  :type 'string
+  :group 'cargo-process)
+
 (defcustom cargo-process--enable-rust-backtrace nil
   "Set RUST_BACKTRACE environment variable to 1 for tasks test and run"
   :group 'cargo-process)
@@ -74,41 +79,41 @@
 
 (defvar cargo-process-last-command nil "Command used last for repeating.")
 
-(defvar cargo-process--command-bench "cargo bench")
+(defvar cargo-process--command-bench "bench")
 
-(defvar cargo-process--command-build "cargo build")
+(defvar cargo-process--command-build "build")
 
-(defvar cargo-process--command-clean "cargo clean")
+(defvar cargo-process--command-clean "clean")
 
-(defvar cargo-process--command-doc "cargo doc")
+(defvar cargo-process--command-doc "doc")
 
-(defvar cargo-process--command-doc-open "cargo doc --open")
+(defvar cargo-process--command-doc-open "doc --open")
 
-(defvar cargo-process--command-new "cargo new")
+(defvar cargo-process--command-new "new")
 
-(defvar cargo-process--command-init "cargo init")
+(defvar cargo-process--command-init "init")
 
-(defvar cargo-process--command-run "cargo run")
+(defvar cargo-process--command-run "run")
 
-(defvar cargo-process--command-run-bin "cargo run --bin")
+(defvar cargo-process--command-run-bin "run --bin")
 
-(defvar cargo-process--command-run-example "cargo run --example")
+(defvar cargo-process--command-run-example "run --example")
 
-(defvar cargo-process--command-search "cargo search")
+(defvar cargo-process--command-search "search")
 
-(defvar cargo-process--command-test "cargo test")
+(defvar cargo-process--command-test "test")
 
-(defvar cargo-process--command-current-test "cargo test")
+(defvar cargo-process--command-current-test "test")
 
-(defvar cargo-process--command-current-file-tests "cargo test")
+(defvar cargo-process--command-current-file-tests "test")
 
-(defvar cargo-process--command-update "cargo update")
+(defvar cargo-process--command-update "update")
 
-(defvar cargo-process--command-fmt "cargo fmt")
+(defvar cargo-process--command-fmt "fmt")
 
-(defvar cargo-process--command-check "cargo check")
+(defvar cargo-process--command-check "check")
 
-(defvar cargo-process--command-clippy "cargo clippy")
+(defvar cargo-process--command-clippy "clippy")
 
 (defface cargo-process--ok-face
   '((t (:foreground "#00ff00")))
@@ -288,12 +293,13 @@ Meant to be run as a `compilation-filter-hook'."
               (cargo-process--get-current-test))
     (cargo-process--get-current-test)))
 
-(defun cargo-process--maybe-read-command (default)
+(defun cargo-process--maybe-read-command (command)
   "Prompt to modify the DEFAULT command when the prefix argument is present.
 Without the prefix argument, return DEFAULT immediately."
-  (if current-prefix-arg
-      (read-shell-command "Cargo command: " default)
-    default))
+  (let ((default (concat cargo-process--command-name " " command)))
+    (if current-prefix-arg
+        (read-shell-command "Cargo command: " default)
+      default)))
 
 ;;;###autoload
 (defun cargo-process-bench ()
