@@ -55,9 +55,9 @@
   :prefix "cargo-process-"
   :group 'cargo)
 
-(defcustom cargo-process--custom-path-to-bin nil
-  "Custom path to the directory containing the cargo executable"
-  :type 'directory
+(defcustom cargo-process--custom-path-to-bin "cargo"
+  "Custom path to the cargo executable"
+  :type 'file
   :group 'cargo-process)
 
 (defcustom cargo-process--enable-rust-backtrace nil
@@ -74,41 +74,41 @@
 
 (defvar cargo-process-last-command nil "Command used last for repeating.")
 
-(defvar cargo-process--command-bench "cargo bench")
+(defvar cargo-process--command-bench "bench")
 
-(defvar cargo-process--command-build "cargo build")
+(defvar cargo-process--command-build "build")
 
-(defvar cargo-process--command-clean "cargo clean")
+(defvar cargo-process--command-clean "clean")
 
-(defvar cargo-process--command-doc "cargo doc")
+(defvar cargo-process--command-doc "doc")
 
-(defvar cargo-process--command-doc-open "cargo doc --open")
+(defvar cargo-process--command-doc-open "doc --open")
 
-(defvar cargo-process--command-new "cargo new")
+(defvar cargo-process--command-new "new")
 
-(defvar cargo-process--command-init "cargo init")
+(defvar cargo-process--command-init "init")
 
-(defvar cargo-process--command-run "cargo run")
+(defvar cargo-process--command-run "run")
 
-(defvar cargo-process--command-run-bin "cargo run --bin")
+(defvar cargo-process--command-run-bin "run --bin")
 
-(defvar cargo-process--command-run-example "cargo run --example")
+(defvar cargo-process--command-run-example "run --example")
 
-(defvar cargo-process--command-search "cargo search")
+(defvar cargo-process--command-search "search")
 
-(defvar cargo-process--command-test "cargo test")
+(defvar cargo-process--command-test "test")
 
-(defvar cargo-process--command-current-test "cargo test")
+(defvar cargo-process--command-current-test "test")
 
-(defvar cargo-process--command-current-file-tests "cargo test")
+(defvar cargo-process--command-current-file-tests "test")
 
-(defvar cargo-process--command-update "cargo update")
+(defvar cargo-process--command-update "update")
 
-(defvar cargo-process--command-fmt "cargo fmt")
+(defvar cargo-process--command-fmt "fmt")
 
-(defvar cargo-process--command-check "cargo check")
+(defvar cargo-process--command-check "check")
 
-(defvar cargo-process--command-clippy "cargo clippy")
+(defvar cargo-process--command-clippy "clippy")
 
 (defface cargo-process--ok-face
   '((t (:foreground "#00ff00")))
@@ -215,9 +215,8 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
   (set-rust-backtrace command)
   (let* ((buffer (concat "*Cargo " name "*"))
          (path cargo-process--custom-path-to-bin)
-         (path (and path (file-name-as-directory path)))
          (command (cargo-process--maybe-read-command
-                   (concat path command " " cargo-process--command-flags)))
+                   (concat path " " command " " cargo-process--command-flags)))
          (project-root (cargo-process--project-root))
          (default-directory (or project-root default-directory)))
     (save-some-buffers (not compilation-ask-about-save)
