@@ -60,6 +60,11 @@
   :type 'file
   :group 'cargo-process)
 
+(defcustom cargo-process--command-name "cargo"
+  "Custom name of the cargo executable"
+  :type 'string
+  :group 'cargo-process)
+
 (defcustom cargo-process--enable-rust-backtrace nil
   "Set RUST_BACKTRACE environment variable to 1 for tasks test and run"
   :group 'cargo-process)
@@ -287,12 +292,13 @@ Meant to be run as a `compilation-filter-hook'."
               (cargo-process--get-current-test))
     (cargo-process--get-current-test)))
 
-(defun cargo-process--maybe-read-command (default)
+(defun cargo-process--maybe-read-command (command)
   "Prompt to modify the DEFAULT command when the prefix argument is present.
 Without the prefix argument, return DEFAULT immediately."
-  (if current-prefix-arg
-      (read-shell-command "Cargo command: " default)
-    default))
+  (let ((default (concat cargo-process--command-name " " command)))
+    (if current-prefix-arg
+        (read-shell-command "Cargo command: " default)
+      default)))
 
 ;;;###autoload
 (defun cargo-process-bench ()
