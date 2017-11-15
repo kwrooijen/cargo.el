@@ -215,8 +215,8 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
   (set-rust-backtrace command)
   (let* ((buffer (concat "*Cargo " name "*"))
          (path cargo-process--custom-path-to-bin)
-         (command (cargo-process--maybe-read-command
-                   (concat path " " command " " cargo-process--command-flags)))
+         (cmd (cargo-process--maybe-read-command
+                (concat path " " command " " cargo-process--command-flags)))
          (project-root (cargo-process--project-root))
          (default-directory (or project-root default-directory)))
     (save-some-buffers (not compilation-ask-about-save)
@@ -225,7 +225,7 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
                               buffer-file-name
                               (string-prefix-p project-root (file-truename buffer-file-name)))))
     (setq cargo-process-last-command (list name command))
-    (compilation-start command 'cargo-process-mode (lambda(_) buffer))
+    (compilation-start cmd 'cargo-process-mode (lambda(_) buffer))
     (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)))
 
 (defun cargo-process--explain-action (button)
