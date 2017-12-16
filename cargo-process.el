@@ -216,7 +216,7 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
   (let* ((buffer (concat "*Cargo " name "*"))
          (path cargo-process--custom-path-to-bin)
          (cmd (cargo-process--maybe-read-command
-                (concat path " " command " " cargo-process--command-flags)))
+               (mapconcat #'identity (list path command cargo-process--command-flags) " ")))
          (project-root (cargo-process--project-root))
          (default-directory (or project-root default-directory)))
     (save-some-buffers (not compilation-ask-about-save)
