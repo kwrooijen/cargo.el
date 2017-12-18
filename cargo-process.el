@@ -74,6 +74,8 @@
 
 (defvar cargo-process-last-command nil "Command used last for repeating.")
 
+(make-variable-buffer-local 'cargo-process-last-command)
+
 (defvar cargo-process--command-bench "bench")
 
 (defvar cargo-process--command-build "build")
@@ -206,17 +208,21 @@
   "Set RUST_BACKTRACE variable depending on the COMMAND used.
 Always set to nil if cargo-process--enable-rust-backtrace is nil"
   (when cargo-process--enable-rust-backtrace
-    (if (string-match "cargo \\(test\\|run\\)" "cargo run")
+    (if (string-match "cargo \\(test\\|run\\)" command)
         (setenv cargo-process--rust-backtrace "1")
       (setenv cargo-process--rust-backtrace nil))))
 
-(defun cargo-process--start (name command)
+(defun cargo-process--start (name command &optional last-command)
   "Start the Cargo process NAME with the cargo command COMMAND."
   (set-rust-backtrace command)
   (let* ((buffer (concat "*Cargo " name "*"))
-         (path cargo-process--custom-path-to-bin)
-         (cmd (cargo-process--maybe-read-command
-                (concat path " " command " " cargo-process--command-flags)))
+         (cmd
+          (or last-command
+              (cargo-process--maybe-read-command
+               (mapconcat #'identity (list cargo-process--custom-path-to-bin
+                                           command
+                                           cargo-process--command-flags)
+                          " "))))
          (project-root (cargo-process--project-root))
          (default-directory (or project-root default-directory)))
     (save-some-buffers (not compilation-ask-about-save)
@@ -224,7 +230,7 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
                          (and project-root
                               buffer-file-name
                               (string-prefix-p project-root (file-truename buffer-file-name)))))
-    (setq cargo-process-last-command (list name command))
+    (setq cargo-process-last-command (list name command cmd))
     (compilation-start cmd 'cargo-process-mode (lambda(_) buffer))
     (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)))
 
