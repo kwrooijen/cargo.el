@@ -49,6 +49,7 @@
 (require 'compile)
 (require 'button)
 (require 'rust-mode)
+(require 'markdown-mode)
 
 (defgroup cargo-process nil
   "Cargo Process group."
@@ -239,15 +240,29 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
   (cargo-process--explain-help (button-label button)))
 
 (defun cargo-process--explain-help (errno)
-  "Display a detailed explaination of ERRNO in the Help buffer."
-  (help-setup-xref (list #'cargo-process--explain-help errno)
-                   (called-interactively-p 'interactive))
-  (save-excursion
-    (with-help-window (help-buffer)
-      (princ (shell-command-to-string
-              (concat "rustc --explain=" errno)))
-      (with-current-buffer standard-output
-        (buffer-string)))))
+  "Display a detailed explaination of ERRNO in a markdown buffer."
+  (pop-to-buffer
+   (let ((current-window (selected-window))
+         (inhibit-message t))
+     (with-current-buffer (get-buffer-create "*rust errno*")
+       (let ((buffer-read-only nil))
+         (erase-buffer)
+         (insert (shell-command-to-string
+                  (concat "rustc --explain=" errno))))
+       (markdown-view-mode)
+       (setq-local markdown-fontify-code-blocks-natively t)
+       (setq-local markdown-fontify-code-block-default-mode 'rust-mode)
+       (setq-local kill-buffer-hook (lambda ()
+                                      (when (window-live-p current-window)
+                                        (select-window current-window))))
+       (setq
+        header-line-format
+        (concat (propertize " " 'display
+                            `(space :align-to (- right-fringe ,(1+ (length errno)))))
+                (propertize errno 'face 'error)))
+       (markdown-toggle-markup-hiding 1)
+       (goto-char 1)
+       (current-buffer)))))
 
 (defun cargo-process--add-errno-buttons ()
   "Turn error numbers into clickable links in Cargo process output.
