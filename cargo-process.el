@@ -55,7 +55,10 @@
   :prefix "cargo-process-"
   :group 'cargo)
 
-(defcustom cargo-process--custom-path-to-bin "cargo"
+(defcustom cargo-process--custom-path-to-bin
+  (or (executable-find "cargo")
+      (expand-file-name "cargo" "~/.cargo/bin")
+      "/usr/local/bin/cargo")
   "Custom path to the cargo executable"
   :type 'file
   :group 'cargo-process)
