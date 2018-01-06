@@ -223,12 +223,12 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
         (setenv cargo-process--rust-backtrace "1")
       (setenv cargo-process--rust-backtrace nil))))
 
-(defun cargo-process--start (name command &optional last-command)
+(defun cargo-process--start (name command &optional last-cmd)
   "Start the Cargo process NAME with the cargo command COMMAND."
   (set-rust-backtrace command)
   (let* ((buffer (concat "*Cargo " name "*"))
          (cmd
-          (or last-command
+          (or last-cmd
               (cargo-process--maybe-read-command
                (mapconcat #'identity (list cargo-process--custom-path-to-bin
                                            command
