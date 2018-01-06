@@ -60,6 +60,14 @@
   :type 'file
   :group 'cargo-process)
 
+(defcustom cargo-process--rustc-cmd
+  (or (executable-find "rustc")
+      (expand-file-name "rustc" "~/.cargo/bin")
+      "/usr/local/bin/rustc")
+  "Custom path to the rustc executable"
+  :type 'file
+  :group 'cargo-process)
+
 (defcustom cargo-process--enable-rust-backtrace nil
   "Set RUST_BACKTRACE environment variable to 1 for tasks test and run"
   :group 'cargo-process)
@@ -245,7 +253,7 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
   (save-excursion
     (with-help-window (help-buffer)
       (princ (shell-command-to-string
-              (concat "rustc --explain=" errno)))
+              (concat cargo-process--rustc-cmd " --explain=" errno)))
       (with-current-buffer standard-output
         (buffer-string)))))
 
