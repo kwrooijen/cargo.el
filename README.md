@@ -62,7 +62,7 @@ processes.
 In order to run `cargo-process-fmt` you need to have the `rustfmt` package installed.
 
 ```
-cargo install rustfmt
+rustup component add rustfmt-preview
 ```
 
 In order to run `cargo-process-check` you need to have the `cargo-check` package installed.
