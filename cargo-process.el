@@ -213,18 +213,28 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
         (setenv cargo-process--rust-backtrace "1")
       (setenv cargo-process--rust-backtrace nil))))
 
+(defun cargo-process--workspace-root ()
+  "Find the worksapce root using `cargo metadata`."
+  (let* ((metadata-text (shell-command-to-string
+			 (concat cargo-process--custom-path-to-bin " metadata --format-version 1 --no-deps")))
+	 (metadata-json (json-read-from-string metadata-text))
+	 (workspace-root (alist-get 'workspace_root metadata-json)))
+    workspace-root))
+
+
 (defun cargo-process--start (name command &optional last-command)
   "Start the Cargo process NAME with the cargo command COMMAND."
   (set-rust-backtrace command)
   (let* ((buffer (concat "*Cargo " name "*"))
+	 (project-root (cargo-process--project-root))
          (cmd
           (or last-command
               (cargo-process--maybe-read-command
                (mapconcat #'identity (list cargo-process--custom-path-to-bin
                                            command
+					   "--manifest-path" (concat project-root "Cargo.toml")
                                            cargo-process--command-flags)
                           " "))))
-         (project-root (cargo-process--project-root))
          (default-directory (or project-root default-directory)))
     (save-some-buffers (not compilation-ask-about-save)
                        (lambda ()
@@ -232,7 +242,8 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
                               buffer-file-name
                               (string-prefix-p project-root (file-truename buffer-file-name)))))
     (setq cargo-process-last-command (list name command cmd))
-    (compilation-start cmd 'cargo-process-mode (lambda(_) buffer))
+    (let ((default-directory (cargo-process--workspace-root)))
+      (compilation-start cmd 'cargo-process-mode (lambda(_) buffer)))
     (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)))
 
 (defun cargo-process--explain-action (button)
