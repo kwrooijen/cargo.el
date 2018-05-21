@@ -227,22 +227,22 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
 (defun cargo-process--workspace-root ()
   "Find the worksapce root using `cargo metadata`."
   (let* ((metadata-text (shell-command-to-string
-			 (concat cargo-process--custom-path-to-bin " metadata --format-version 1 --no-deps")))
-	 (metadata-json (json-read-from-string metadata-text))
-	 (workspace-root (alist-get 'workspace_root metadata-json)))
+                         (concat cargo-process--custom-path-to-bin " metadata --format-version 1 --no-deps")))
+         (metadata-json (json-read-from-string metadata-text))
+         (workspace-root (alist-get 'workspace_root metadata-json)))
     workspace-root))
 
 (defun cargo-process--start (name command &optional last-cmd)
   "Start the Cargo process NAME with the cargo command COMMAND."
   (set-rust-backtrace command)
   (let* ((buffer (concat "*Cargo " name "*"))
-	 (project-root (cargo-process--project-root))
+         (project-root (cargo-process--project-root))
          (cmd
           (or last-cmd
               (cargo-process--maybe-read-command
                (mapconcat #'identity (list cargo-process--custom-path-to-bin
                                            command
-					   "--manifest-path" (concat project-root "Cargo.toml")
+                                           "--manifest-path" (concat project-root "Cargo.toml")
                                            cargo-process--command-flags)
                           " "))))
          (default-directory (or project-root default-directory)))
@@ -292,11 +292,11 @@ Meant to be run as a `compilation-filter-hook'."
     (let ((start compilation-filter-start)
           (end (point))
           (case-fold-search nil))
-     (goto-char start)
-     (while (re-search-forward cargo-process--errno-regex end t)
-       (make-button (match-beginning 0)
-                    (match-end 0)
-                    :type 'rustc-errno)))))
+      (goto-char start)
+      (while (re-search-forward cargo-process--errno-regex end t)
+        (make-button (match-beginning 0)
+                     (match-end 0)
+                     :type 'rustc-errno)))))
 
 (defun cargo-process--get-current-test ()
   "Return the current test."
