@@ -49,6 +49,7 @@
 (require 'compile)
 (require 'button)
 (require 'rust-mode)
+(require 'markdown-mode)
 
 (defgroup cargo-process nil
   "Cargo Process group."
@@ -223,18 +224,27 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
         (setenv cargo-process--rust-backtrace "1")
       (setenv cargo-process--rust-backtrace nil))))
 
+(defun cargo-process--workspace-root ()
+  "Find the worksapce root using `cargo metadata`."
+  (let* ((metadata-text (shell-command-to-string
+			 (concat cargo-process--custom-path-to-bin " metadata --format-version 1 --no-deps")))
+	 (metadata-json (json-read-from-string metadata-text))
+	 (workspace-root (alist-get 'workspace_root metadata-json)))
+    workspace-root))
+
 (defun cargo-process--start (name command &optional last-cmd)
   "Start the Cargo process NAME with the cargo command COMMAND."
   (set-rust-backtrace command)
   (let* ((buffer (concat "*Cargo " name "*"))
+	 (project-root (cargo-process--project-root))
          (cmd
           (or last-cmd
               (cargo-process--maybe-read-command
                (mapconcat #'identity (list cargo-process--custom-path-to-bin
                                            command
+					   "--manifest-path" (concat project-root "Cargo.toml")
                                            cargo-process--command-flags)
                           " "))))
-         (project-root (cargo-process--project-root))
          (default-directory (or project-root default-directory)))
     (save-some-buffers (not compilation-ask-about-save)
                        (lambda ()
@@ -242,7 +252,8 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
                               buffer-file-name
                               (string-prefix-p project-root (file-truename buffer-file-name)))))
     (setq cargo-process-last-command (list name command cmd))
-    (compilation-start cmd 'cargo-process-mode (lambda(_) buffer))
+    (let ((default-directory (cargo-process--workspace-root)))
+      (compilation-start cmd 'cargo-process-mode (lambda(_) buffer)))
     (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)))
 
 (defun cargo-process--explain-action (button)
@@ -250,15 +261,29 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
   (cargo-process--explain-help (button-label button)))
 
 (defun cargo-process--explain-help (errno)
-  "Display a detailed explaination of ERRNO in the Help buffer."
-  (help-setup-xref (list #'cargo-process--explain-help errno)
-                   (called-interactively-p 'interactive))
-  (save-excursion
-    (with-help-window (help-buffer)
-      (princ (shell-command-to-string
-              (concat cargo-process--rustc-cmd " --explain=" errno)))
-      (with-current-buffer standard-output
-        (buffer-string)))))
+  "Display a detailed explaination of ERRNO in a markdown buffer."
+  (pop-to-buffer
+   (let ((current-window (selected-window))
+         (inhibit-message t))
+     (with-current-buffer (get-buffer-create "*rust errno*")
+       (let ((buffer-read-only nil))
+         (erase-buffer)
+         (insert (shell-command-to-string
+                  (concat cargo-process--rustc-cmd " --explain=" errno))))
+       (markdown-view-mode)
+       (setq-local markdown-fontify-code-blocks-natively t)
+       (setq-local markdown-fontify-code-block-default-mode 'rust-mode)
+       (setq-local kill-buffer-hook (lambda ()
+                                      (when (window-live-p current-window)
+                                        (select-window current-window))))
+       (setq
+        header-line-format
+        (concat (propertize " " 'display
+                            `(space :align-to (- right-fringe ,(1+ (length errno)))))
+                (propertize errno 'face 'error)))
+       (markdown-toggle-markup-hiding 1)
+       (goto-char 1)
+       (current-buffer)))))
 
 (defun cargo-process--add-errno-buttons ()
   "Turn error numbers into clickable links in Cargo process output.
