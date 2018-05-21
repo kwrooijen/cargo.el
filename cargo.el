@@ -59,7 +59,9 @@
 
 ;;;###autoload
 (define-minor-mode cargo-minor-mode
-  "Cargo minor mode. Used to hold keybindings for cargo-mode"
+  "Cargo minor mode. Used to hold keybindings for cargo-mode.
+
+\\{cargo-minor-mode-map}"
   nil " cargo" cargo-minor-mode-map)
 
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-e") 'cargo-process-bench)
