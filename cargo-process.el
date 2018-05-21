@@ -56,8 +56,19 @@
   :prefix "cargo-process-"
   :group 'cargo)
 
-(defcustom cargo-process--custom-path-to-bin "cargo"
+(defcustom cargo-process--custom-path-to-bin
+  (or (executable-find "cargo")
+      (expand-file-name "cargo" "~/.cargo/bin")
+      "/usr/local/bin/cargo")
   "Custom path to the cargo executable"
+  :type 'file
+  :group 'cargo-process)
+
+(defcustom cargo-process--rustc-cmd
+  (or (executable-find "rustc")
+      (expand-file-name "rustc" "~/.cargo/bin")
+      "/usr/local/bin/rustc")
+  "Custom path to the rustc executable"
   :type 'file
   :group 'cargo-process)
 
@@ -221,14 +232,13 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
 	 (workspace-root (alist-get 'workspace_root metadata-json)))
     workspace-root))
 
-
-(defun cargo-process--start (name command &optional last-command)
+(defun cargo-process--start (name command &optional last-cmd)
   "Start the Cargo process NAME with the cargo command COMMAND."
   (set-rust-backtrace command)
   (let* ((buffer (concat "*Cargo " name "*"))
 	 (project-root (cargo-process--project-root))
          (cmd
-          (or last-command
+          (or last-cmd
               (cargo-process--maybe-read-command
                (mapconcat #'identity (list cargo-process--custom-path-to-bin
                                            command
@@ -259,7 +269,7 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
        (let ((buffer-read-only nil))
          (erase-buffer)
          (insert (shell-command-to-string
-                  (concat "rustc --explain=" errno))))
+                  (concat cargo-process--rustc-cmd " --explain=" errno))))
        (markdown-view-mode)
        (setq-local markdown-fontify-code-blocks-natively t)
        (setq-local markdown-fontify-code-block-default-mode 'rust-mode)
