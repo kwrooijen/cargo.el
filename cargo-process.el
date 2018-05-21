@@ -178,9 +178,19 @@
                 (buffer-substring-no-properties (line-beginning-position)
                                                 (line-end-position))))
 
+(defun cargo-process--workspace-root ()
+  "Find the worksapce root using `cargo metadata`."
+  (let* ((metadata-text (shell-command-to-string
+			 "cargo metadata --format-version 1 --no-deps"))
+	 (metadata-json (json-read-from-string metadata-text))
+	 (workspace-root (alist-get 'workspace_root metadata-json)))
+    workspace-root))
+
 (defun cargo-process--project-root ()
   "Find the root of the current Cargo project."
-  (let ((root (locate-dominating-file (or buffer-file-name default-directory) "Cargo.toml")))
+  (let* ((guess-root (locate-dominating-file (or buffer-file-name default-directory) "Cargo.toml"))
+	 (workspace-root (cargo-process--workspace-root))
+	 (root (or workspace-root guess-root)))
     (and root (file-truename root))))
 
 (define-derived-mode cargo-process-mode compilation-mode "Cargo-Process."
