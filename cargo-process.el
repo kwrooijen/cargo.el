@@ -559,7 +559,7 @@ Cargo: Remove a dependency from a Cargo.toml manifest file."
 					 (cargo-process--project-root) "Cargo.toml"))))
 	  (if deplist
 		  (completing-read "Crate to remove: "
-						   deplist)
+						   deplist nil t)
 		(progn
 		  (message "No crates used in current project.")
 		  nil)))))
@@ -581,7 +581,7 @@ Cargo: Upgrade dependencies as specified in the local manifest file"
 							 (y-or-n-p "Upgrade all crates? "))
 					 "--all"))
 			  (crates (if (not all)
-						  (completing-read "Crates to upgrade: " deplist)
+						  (completing-read "Crates to upgrade: " deplist nil t)
 						nil)))
 		  (cargo-process--start "Upgrade" (concat cargo-process--command-upgrade
 												  " "
