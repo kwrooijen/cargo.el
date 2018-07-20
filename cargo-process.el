@@ -42,6 +42,10 @@
 ;;  * cargo-process-fmt                - Run the optional cargo command fmt.
 ;;  * cargo-process-check              - Run the optional cargo command check.
 ;;  * cargo-process-clippy             - Run the optional cargo command clippy.
+;;  * cargo-process-add                - Run the optional cargo command add.
+;;  * cargo-process-rm                 - Run the optional cargo command rm.
+;;  * cargo-process-upgrade            - Run the optional cargo command upgrade.
+
 
 ;;
 ;;; Code:
@@ -123,6 +127,13 @@
 (defvar cargo-process--command-check "check")
 
 (defvar cargo-process--command-clippy "clippy")
+
+(defvar cargo-process--command-add "add")
+
+(defvar cargo-process--command-rm "rm")
+
+(defvar cargo-process--command-upgrade "upgrade")
+
 
 (defface cargo-process--ok-face
   '((t (:foreground "#00ff00")))
@@ -505,6 +516,45 @@ Cargo: Clippy compile the current project.
 Requires Cargo clippy to be installed."
   (interactive)
   (cargo-process--start "Clippy" cargo-process--command-clippy))
+
+;;;###autoload
+(defun cargo-process-add (crate)
+  "Run the Cargo add command.
+With the prefix argument, modify the command's invocation.
+CRATE is the name of the crate to add.
+Cargo: This command allows you to add a dependency to a Cargo.toml manifest file."
+  (interactive "sCrate name: ")
+  (cargo-process--start "Add" (concat cargo-process--command-add
+									  " "
+									  crate)))
+
+;;;###autoload
+(defun cargo-process-rm (crate)
+  "Run the Cargo rm command.
+With the prefix argument, modify the command's invocation.
+CRATE is the name of the crate to remove.
+Cargo: Remove a dependency from a Cargo.toml manifest file."
+  (interactive "sCrate name: ")
+  (cargo-process--start "Remove" (concat cargo-process--command-rm
+										 " "
+										 crate)))
+;;;###autoload
+(defun cargo-process-upgrade (&optional all crates)
+  "Run the Cargo update command.
+With the prefix argument, modify the command's invocation.
+If ALL is t then update all crates, otherwise specify CRATES.
+Cargo: Upgrade dependencies as specified in the local manifest file"
+  (interactive)
+  (let ((all (when (or all
+					   (y-or-n-p "Upgrade all crates? "))
+			   "--all"))
+		(crates (if (not all)
+					(read-string "Crates to upgrade: ")
+				  nil)))
+	(cargo-process--start "Upgrade" (concat cargo-process--command-upgrade
+											" "
+											all
+											crates))))
 
 ;;;###autoload
 (defun cargo-process-repeat ()
