@@ -523,7 +523,7 @@ Requires Cargo clippy to be installed."
 With the prefix argument, modify the command's invocation.
 CRATE is the name of the crate to add.
 Cargo: This command allows you to add a dependency to a Cargo.toml manifest file."
-  (interactive "sCrate name: ")
+  (interactive "sCrate(s) to add: ")
   (cargo-process--start "Add" (concat cargo-process--command-add
 									  " "
 									  crate)))
@@ -534,7 +534,7 @@ Cargo: This command allows you to add a dependency to a Cargo.toml manifest file
 With the prefix argument, modify the command's invocation.
 CRATE is the name of the crate to remove.
 Cargo: Remove a dependency from a Cargo.toml manifest file."
-  (interactive "sCrate name: ")
+  (interactive "sCrate to remove: ")
   (cargo-process--start "Remove" (concat cargo-process--command-rm
 										 " "
 										 crate)))
