@@ -40,6 +40,9 @@ You will now have the following key combinations at your disposal:
  <kbd>C-c C-c C-m</kbd> | cargo-process-fmt
  <kbd>C-c C-c C-k</kbd> | cargo-process-check
  <kbd>C-c C-c C-S-k</kbd> | cargo-process-clippy
+ <kbd>C-c C-c C-a</kbd> | cargo-process-add
+ <kbd>C-c C-c C-S-d</kbd> | cargo-process-rm
+ <kbd>C-c C-c C-S-u</kbd> | cargo-process-upgrade
 
 Before executing the task, Emacs will prompt you to save any modified buffers
 associated with the current Cargo project. Setting `compilation-ask-about-save`
@@ -70,6 +73,9 @@ Here's a list of commands and their default value.
 (setq cargo-process--command-fmt "cargo fmt")
 (setq cargo-process--command-check "cargo check")
 (setq cargo-process--command-clippy "cargo clippy")
+(setq cargo-process--command-add "cargo add")
+(setq cargo-process--command-rm "cargo rm")
+(setq cargo-process--command-upgrade "cargo upgrade")
 ```
 
 ### Advanced usage
@@ -103,3 +109,10 @@ In order to run `cargo-process-clippy` you need to have the `clippy` package ins
 ```
 cargo install clippy
 ```
+
+In order to run `cargo-process-{add,rm,upgrade}` you need to have the `cargo-edit` package installed.
+
+```
+cargo install cargo-edit
+```
+
