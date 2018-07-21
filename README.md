@@ -115,4 +115,5 @@ In order to run `cargo-process-{add,rm,upgrade}` you need to have the `cargo-edi
 ```
 cargo install cargo-edit
 ```
+For completion in `cargo-process-add`, configure `cargo-process-favorite-crates`.
 

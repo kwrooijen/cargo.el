@@ -134,6 +134,8 @@
 
 (defvar cargo-process--command-upgrade "upgrade")
 
+(defvar cargo-process-favorite-crates nil)
+
 
 (defface cargo-process--ok-face
   '((t (:foreground "#00ff00")))
@@ -539,9 +541,10 @@ Requires Cargo clippy to be installed."
 (defun cargo-process-add (crate)
   "Run the Cargo add command.
 With the prefix argument, modify the command's invocation.
-CRATE is the name of the crate to add.
+CRATES is the name of the crate to add.
 Cargo: This command allows you to add a dependency to a Cargo.toml manifest file."
-  (interactive "sCrate(s) to add: ")
+  (interactive (list
+				(completing-read "Crate(s) to add: " cargo-process-favorite-crates)))
   (cargo-process--start "Add" (concat cargo-process--command-add
 									  " "
 									  crate)))
@@ -581,7 +584,7 @@ Cargo: Upgrade dependencies as specified in the local manifest file"
 							 (y-or-n-p "Upgrade all crates? "))
 					 "--all"))
 			  (crates (if (not all)
-						  (completing-read "Crates to upgrade: " deplist nil t)
+						  (completing-read "Crate(s) to upgrade: " deplist nil 'confirm)
 						nil)))
 		  (cargo-process--start "Upgrade" (concat cargo-process--command-upgrade
 												  " "
