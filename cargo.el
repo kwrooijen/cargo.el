@@ -43,6 +43,9 @@
 ;;  * C-c C-c C-m - cargo-process-fmt
 ;;  * C-c C-c C-k - cargo-process-check
 ;;  * C-c C-c C-K - cargo-process-clippy
+;;  * C-c C-c C-a - cargo-process-add
+;;  * C-c C-c C-D - cargo-process-rm
+;;  * C-c C-c C-U - cargo-process-upgrade
 
 ;;
 ;;; Code:
@@ -82,6 +85,9 @@
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-m") 'cargo-process-fmt)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-k") 'cargo-process-check)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-S-k") 'cargo-process-clippy)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-a") 'cargo-process-add)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-S-d") 'cargo-process-rm)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-S-u") 'cargo-process-upgrade)
 
 (provide 'cargo)
 ;;; cargo.el ends here

@@ -42,6 +42,9 @@
 ;;  * cargo-process-fmt                - Run the optional cargo command fmt.
 ;;  * cargo-process-check              - Run the optional cargo command check.
 ;;  * cargo-process-clippy             - Run the optional cargo command clippy.
+;;  * cargo-process-add                - Run the optional cargo command add.
+;;  * cargo-process-rm                 - Run the optional cargo command rm.
+;;  * cargo-process-upgrade            - Run the optional cargo command upgrade.
 
 ;;
 ;;; Code:
@@ -128,6 +131,14 @@
 
 (defvar cargo-process--command-clippy "clippy")
 
+(defvar cargo-process--command-add "add")
+
+(defvar cargo-process--command-rm "rm")
+
+(defvar cargo-process--command-upgrade "upgrade")
+
+(defvar cargo-process-favorite-crates nil)
+
 (defface cargo-process--ok-face
   '((t (:foreground "#00ff00")))
   "Ok face"
@@ -193,11 +204,11 @@
                 (buffer-substring-no-properties (line-beginning-position)
                                                 (line-end-position))))
 
-(defun cargo-process--project-root ()
+(defun cargo-process--project-root (&optional extra)
   "Find the root of the current Cargo project."
   (let ((root (locate-dominating-file (or buffer-file-name default-directory) "Cargo.toml")))
     (when root
-      (file-truename root))))
+      (file-truename (concat root extra)))))
 
 (define-derived-mode cargo-process-mode compilation-mode "Cargo-Process."
   "Major mode for the Cargo process buffer."
@@ -348,6 +359,23 @@ Without the prefix argument, return DEFAULT immediately."
   (if current-prefix-arg
       (read-shell-command "Cargo command: " default)
     default))
+
+(defun cargo-process--get-dependencies (&optional manifest)
+  "Extract the list of dependencies from the
+MANIFEST (i.e. Cargo.toml)."
+  (with-current-buffer (find-file-noselect (or manifest
+                                               (cargo-process--project-root "Cargo.toml")))
+    (save-excursion
+      (let ((deps-list))
+        (widen)
+        (goto-char (point-min))
+        (search-forward "[dependencies]" nil t)
+        (while (re-search-forward "^[a-zA-Z\-\_]* *=" nil t)
+          (beginning-of-line)
+          (setq deps-list
+                (cons (thing-at-point 'sexp t) deps-list))
+          (end-of-line))
+        deps-list))))
 
 ;;;###autoload
 (defun cargo-process-bench ()
@@ -518,6 +546,56 @@ Cargo: Clippy compile the current project.
 Requires Cargo clippy to be installed."
   (interactive)
   (cargo-process--start "Clippy" cargo-process--command-clippy))
+
+;;;###autoload
+(defun cargo-process-add (crate)
+  "Run the Cargo add command.
+With the prefix argument, modify the command's invocation.
+CRATES is the name of the crate to add.
+Cargo: This command allows you to add a dependency to a Cargo.toml manifest file."
+  (interactive (list
+                (completing-read "Crate(s) to add: " cargo-process-favorite-crates)))
+  (cargo-process--start "Add" (concat cargo-process--command-add
+                                      " "
+                                      crate)))
+
+;;;###autoload
+(defun cargo-process-rm (crate)
+  "Run the Cargo rm command.
+With the prefix argument, modify the command's invocation.
+CRATE is the name of the crate to remove.
+Cargo: Remove a dependency from a Cargo.toml manifest file."
+  (interactive
+   (list
+    (let ((deplist (cargo-process--get-dependencies)))
+      (when deplist
+        (completing-read "Crate to remove: "
+                         deplist nil t)))))
+  (if crate (cargo-process--start "Remove" (concat cargo-process--command-rm
+                                                   " "
+                                                   crate))
+    (message "No crates used in current project.")))
+
+;;;###autoload
+(defun cargo-process-upgrade (&optional all crates)
+  "Run the Cargo update command.
+With the prefix argument, modify the command's invocation.
+If ALL is t then update all crates, otherwise specify CRATES.
+Cargo: Upgrade dependencies as specified in the local manifest file"
+  (interactive)
+  (let ((deplist (cargo-process--get-dependencies)))
+    (if deplist
+        (let* ((all (when (or all
+                              (y-or-n-p "Upgrade all crates? "))
+                      "--all"))
+               (crates (when (not all)
+                         (completing-read "Crate(s) to upgrade: " deplist nil 'confirm))))
+          (cargo-process--start "Upgrade" (concat cargo-process--command-upgrade
+                                                  " "
+                                                  all
+                                                  " "
+                                                  crates)))
+      (message "No crates used in current project."))))
 
 ;;;###autoload
 (defun cargo-process-repeat ()
