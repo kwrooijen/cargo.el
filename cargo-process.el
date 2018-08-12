@@ -87,6 +87,10 @@
   (nconc (make-sparse-keymap) compilation-mode-map)
   "Keymap for Cargo major mode.")
 
+(defvar cargo-process--no-manifest-commands
+  '("New" "Init")
+  "These commands should not specify a manifest file.")
+
 (defvar cargo-process-last-command nil "Command used last for repeating.")
 
 (make-variable-buffer-local 'cargo-process-last-command)
@@ -203,7 +207,8 @@
 (defun cargo-process--project-root (&optional extra)
   "Find the root of the current Cargo project."
   (let ((root (locate-dominating-file (or buffer-file-name default-directory) "Cargo.toml")))
-    (and root (file-truename (concat root extra)))))
+    (when root
+      (file-truename (concat root extra)))))
 
 (define-derived-mode cargo-process-mode compilation-mode "Cargo-Process."
   "Major mode for the Cargo process buffer."
@@ -236,12 +241,19 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
       (setenv cargo-process--rust-backtrace nil))))
 
 (defun cargo-process--workspace-root ()
-  "Find the worksapce root using `cargo metadata`."
-  (let* ((metadata-text (shell-command-to-string
-                         (concat cargo-process--custom-path-to-bin " metadata --format-version 1 --no-deps")))
-         (metadata-json (json-read-from-string metadata-text))
-         (workspace-root (alist-get 'workspace_root metadata-json)))
-    workspace-root))
+  "Find the workspace root using `cargo metadata`."
+  (when (cargo-process--project-root)
+    (let* ((metadata-text (shell-command-to-string
+                           (concat cargo-process--custom-path-to-bin
+                                   " metadata --format-version 1 --no-deps")))
+           (metadata-json (json-read-from-string metadata-text))
+           (workspace-root (alist-get 'workspace_root metadata-json)))
+      workspace-root)))
+
+(defun manifest-path-argument (name)
+  (when (and (cargo-process--project-root)
+             (not (member name cargo-process--no-manifest-commands)))
+    (concat "--manifest-path " (cargo-process--project-root) "Cargo.toml")))
 
 (defun cargo-process--start (name command &optional last-cmd)
   "Start the Cargo process NAME with the cargo command COMMAND."
@@ -253,7 +265,7 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
               (cargo-process--maybe-read-command
                (mapconcat #'identity (list cargo-process--custom-path-to-bin
                                            command
-                                           "--manifest-path" (concat project-root "Cargo.toml")
+                                           (manifest-path-argument name)
                                            cargo-process--command-flags)
                           " "))))
          (default-directory (or project-root default-directory)))
@@ -263,7 +275,8 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
                               buffer-file-name
                               (string-prefix-p project-root (file-truename buffer-file-name)))))
     (setq cargo-process-last-command (list name command cmd))
-    (let ((default-directory (cargo-process--workspace-root)))
+    (let ((default-directory (or (cargo-process--workspace-root)
+                                 default-directory)))
       (compilation-start cmd 'cargo-process-mode (lambda(_) buffer)))
     (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)))
 
