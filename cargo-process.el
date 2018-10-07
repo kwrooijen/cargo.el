@@ -255,7 +255,7 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
              (not (member name cargo-process--no-manifest-commands)))
     (concat "--manifest-path " (shell-quote-argument (cargo-process--project-root)) "Cargo.toml")))
 
-(defun cargo-process--start (name command &optional last-cmd)
+(defun cargo-process--start (name command &optional last-cmd is-xdg)
   "Start the Cargo process NAME with the cargo command COMMAND."
   (set-rust-backtrace command)
   (let* ((buffer (concat "*Cargo " name "*"))
@@ -263,7 +263,8 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
          (cmd
           (or last-cmd
               (cargo-process--maybe-read-command
-               (mapconcat #'identity (list cargo-process--custom-path-to-bin
+               (mapconcat #'identity (list "setsid -w"
+                                           cargo-process--custom-path-to-bin
                                            command
                                            (manifest-path-argument name)
                                            cargo-process--command-flags)
@@ -415,7 +416,9 @@ Cargo: Build this project's and its dependencies' documentation."
 With the prefix argument, modify the command's invocation.
 Cargo: Open this project's documentation."
   (interactive)
-  (cargo-process--start "Doc" cargo-process--command-doc-open))
+  (cargo-process--start "Doc" cargo-process--command-doc-open nil (and
+                                                                   (not (eq system-type (or 'windows-nt 'ms-dos)))
+                                                                   (executable-find "setsid"))))
 
 ;;;###autoload
 (defun cargo-process-new (name &optional bin)
