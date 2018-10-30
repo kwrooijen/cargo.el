@@ -382,9 +382,9 @@ MANIFEST (i.e. Cargo.toml)."
 (defun cargo-process--augment-cmd-for-os (opens-external cmd)
   "Augment the cargo CMD according to OS. OPENS-EXTERNAL is non-nil
 if the CMD is expected to open and external application."
-  (if (and opens-external (and
-                           (not (member system-type '(windows-nt ms-dos)))
-                           (executable-find "setsid")))
+  (if (and opens-external
+           (not (member system-type '(windows-nt ms-dos)))
+           (executable-find "setsid"))
       (concat "setsid -w " cmd)
     cmd))
 
