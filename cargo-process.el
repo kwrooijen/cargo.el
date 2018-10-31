@@ -255,19 +255,21 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
              (not (member name cargo-process--no-manifest-commands)))
     (concat "--manifest-path " (shell-quote-argument (cargo-process--project-root)) "Cargo.toml")))
 
-(defun cargo-process--start (name command &optional last-cmd)
-  "Start the Cargo process NAME with the cargo command COMMAND."
+(defun cargo-process--start (name command &optional last-cmd opens-external)
+  "Start the Cargo process NAME with the cargo command COMMAND.
+OPENS-EXTERNAL is non-nil if the COMMAND is expected to open an external application."
   (set-rust-backtrace command)
   (let* ((buffer (concat "*Cargo " name "*"))
          (project-root (cargo-process--project-root))
          (cmd
           (or last-cmd
               (cargo-process--maybe-read-command
-               (mapconcat #'identity (list cargo-process--custom-path-to-bin
-                                           command
-                                           (manifest-path-argument name)
-                                           cargo-process--command-flags)
-                          " "))))
+               (cargo-process--augment-cmd-for-os opens-external
+                                                  (mapconcat #'identity (list cargo-process--custom-path-to-bin
+                                                                              command
+                                                                              (manifest-path-argument name)
+                                                                              cargo-process--command-flags)
+                                                             " ")))))
          (default-directory (or project-root default-directory)))
     (save-some-buffers (not compilation-ask-about-save)
                        (lambda ()
@@ -377,6 +379,15 @@ MANIFEST (i.e. Cargo.toml)."
           (end-of-line))
         deps-list))))
 
+(defun cargo-process--augment-cmd-for-os (opens-external cmd)
+  "Augment the cargo CMD according to OS. OPENS-EXTERNAL is non-nil
+if the CMD is expected to open and external application."
+  (if (and opens-external
+           (not (member system-type '(windows-nt ms-dos)))
+           (executable-find "setsid"))
+      (concat "setsid -w " cmd)
+    cmd))
+
 ;;;###autoload
 (defun cargo-process-bench ()
   "Run the Cargo bench command.
@@ -415,7 +426,7 @@ Cargo: Build this project's and its dependencies' documentation."
 With the prefix argument, modify the command's invocation.
 Cargo: Open this project's documentation."
   (interactive)
-  (cargo-process--start "Doc" cargo-process--command-doc-open))
+  (cargo-process--start "Doc" cargo-process--command-doc-open nil t))
 
 ;;;###autoload
 (defun cargo-process-new (name &optional bin)
