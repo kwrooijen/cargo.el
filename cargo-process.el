@@ -436,9 +436,10 @@ NAME is the name of your application.
 If BIN is t then create a binary application, otherwise a library.
 Cargo: Create a new cargo project."
   (interactive "sProject name: ")
-  (let ((bin (when (or bin
-                       (y-or-n-p "Create Bin Project? "))
-               " --bin")))
+  (let ((bin (if (or bin
+                     (y-or-n-p "Create Bin Project? "))
+                 " --bin"
+                 " --lib")))
     (cargo-process--start "New" (concat cargo-process--command-new
                                         " "
                                         name
