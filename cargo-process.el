@@ -88,7 +88,7 @@
   "Keymap for Cargo major mode.")
 
 (defvar cargo-process--no-manifest-commands
-  '("New" "Init")
+  '("New" "Init" "Search" "Fmt")
   "These commands should not specify a manifest file.")
 
 (defvar cargo-process-last-command nil "Command used last for repeating.")
