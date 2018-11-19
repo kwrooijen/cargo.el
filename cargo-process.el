@@ -236,10 +236,10 @@
 (defun set-rust-backtrace (command)
   "Set RUST_BACKTRACE variable depending on the COMMAND used.
 Always set to nil if cargo-process--enable-rust-backtrace is nil"
-  (when cargo-process--enable-rust-backtrace
-    (if (string-match "cargo \\(test\\|run\\)" command)
-        (setenv cargo-process--rust-backtrace "1")
-      (setenv cargo-process--rust-backtrace nil))))
+  (if (and cargo-process--enable-rust-backtrace
+           (string-match "\\(test\\|run\\)" command))
+      (setenv cargo-process--rust-backtrace "1")
+    (setenv cargo-process--rust-backtrace nil)))
 
 (defun cargo-process--workspace-root ()
   "Find the workspace root using `cargo metadata`."
