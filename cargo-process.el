@@ -248,7 +248,7 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
                            (concat cargo-process--custom-path-to-bin
                                    " metadata --format-version 1 --no-deps")))
            (metadata-json (json-read-from-string metadata-text))
-           (workspace-root (alist-get 'workspace_root metadata-json)))
+           (workspace-root (cdr (assoc 'workspace_root metadata-json))))
       workspace-root)))
 
 (defun manifest-path-argument (name)
