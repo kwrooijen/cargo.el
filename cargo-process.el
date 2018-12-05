@@ -141,33 +141,32 @@
 (defvar cargo-process-favorite-crates nil)
 
 (defface cargo-process--ok-face
-  '((t (:foreground "#00ff00")))
+  '((t (:inherit success)))
   "Ok face"
   :group 'cargo-process)
 
 (defface cargo-process--error-face
-  '((t (:foreground "#FF0000")))
+  '((t (:inherit error)))
   "Error face"
   :group 'cargo-process)
 
 (defface cargo-process--warning-face
-  '((t (:foreground "#eeee00")))
+  '((t (:inherit warning)))
   "Warning face"
   :group 'cargo-process)
 
 (defface cargo-process--pointer-face
-  '((t (:foreground "#ff00ff")))
+  '((t (:inherit font-lock-negation-char-face)))
   "Pointer face"
   :group 'cargo-process)
 
 (defface cargo-process--standard-face
-  '((t (:foreground "#ffa500")))
+  '((t (:inherit font-lock-comment-face)))
   "Standard face"
   :group 'cargo-process)
 
 (defface cargo-process--errno-face
-  '((t :foreground "#7777ff"
-       :underline t))
+  '((t (:inherit link)))
   "Error number face"
   :group 'cargo-process)
 
