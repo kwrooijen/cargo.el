@@ -96,47 +96,68 @@
 
 (make-variable-buffer-local 'cargo-process-last-command)
 
-(defvar cargo-process--command-bench "bench")
+(defcustom cargo-process--command-bench "bench"
+  "Subcommand used by `cargo-process-bench'.")
 
-(defvar cargo-process--command-build "build")
+(defcustom cargo-process--command-build "build"
+  "Subcommand used by `cargo-process-build'.")
 
-(defvar cargo-process--command-clean "clean")
+(defcustom cargo-process--command-clean "clean"
+  "Subcommand used by `cargo-process-clean'.")
 
-(defvar cargo-process--command-doc "doc")
+(defcustom cargo-process--command-doc "doc"
+  "Subcommand used by `cargo-process-doc'.")
 
-(defvar cargo-process--command-doc-open "doc --open")
+(defcustom cargo-process--command-doc-open "doc --open"
+  "Subcommand used by `cargo-process-doc'.")
 
-(defvar cargo-process--command-new "new")
+(defcustom cargo-process--command-new "new"
+  "Subcommand used by `cargo-process-new'.")
 
-(defvar cargo-process--command-init "init")
+(defcustom cargo-process--command-init "init"
+  "Subcommand used by `cargo-process-init'.")
 
-(defvar cargo-process--command-run "run")
+(defcustom cargo-process--command-run "run"
+  "Subcommand used by `cargo-process-run'.")
 
-(defvar cargo-process--command-run-bin "run --bin")
+(defcustom cargo-process--command-run-bin "run --bin"
+  "Subcommand used by `cargo-process-run-bin'.")
 
-(defvar cargo-process--command-run-example "run --example")
+(defcustom cargo-process--command-run-example "run --example"
+  "Subcommand used by `cargo-process-run-example'.")
 
-(defvar cargo-process--command-search "search")
+(defcustom cargo-process--command-search "search"
+  "Subcommand used by `cargo-process-search'.")
 
-(defvar cargo-process--command-test "test")
+(defcustom cargo-process--command-test "test"
+  "Subcommand used by `cargo-process-test'.")
 
-(defvar cargo-process--command-current-test "test")
+(defcustom cargo-process--command-current-test "test"
+  "Subcommand used by `cargo-process-current-test'.")
 
-(defvar cargo-process--command-current-file-tests "test")
+(defcustom cargo-process--command-current-file-tests "test"
+  "Subcommand used by `cargo-process-current-file-tests'.")
 
-(defvar cargo-process--command-update "update")
+(defcustom cargo-process--command-update "update"
+  "Subcommand used by `cargo-process-update'.")
 
-(defvar cargo-process--command-fmt "fmt")
+(defcustom cargo-process--command-fmt "fmt"
+  "Subcommand used by `cargo-process-fmt'.")
 
-(defvar cargo-process--command-check "check")
+(defcustom cargo-process--command-check "check"
+  "Subcommand used by `cargo-process-check'.")
 
-(defvar cargo-process--command-clippy "clippy")
+(defcustom cargo-process--command-clippy "clippy"
+  "Subcommand used by `cargo-process-clippy'.")
 
-(defvar cargo-process--command-add "add")
+(defcustom cargo-process--command-add "add"
+  "Subcommand used by `cargo-process-add'.")
 
-(defvar cargo-process--command-rm "rm")
+(defcustom cargo-process--command-rm "rm"
+  "Subcommand used by `cargo-process-rm'.")
 
-(defvar cargo-process--command-upgrade "upgrade")
+(defcustom cargo-process--command-upgrade "upgrade"
+  "Subcommand used by `cargo-process-upgrade'.")
 
 (defvar cargo-process-favorite-crates nil)
 
