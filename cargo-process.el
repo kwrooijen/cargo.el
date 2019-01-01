@@ -365,7 +365,7 @@ Meant to be run as a `compilation-filter-hook'."
       (let* ((line (buffer-substring-no-properties (line-beginning-position)
                                                    (line-end-position)))
              (line (string-trim-left line))
-             (lines (split-string line " "))
+             (lines (split-string line " \\|{"))
              (mod (cadr lines)))
         mod))))
 
