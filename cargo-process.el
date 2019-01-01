@@ -196,7 +196,7 @@
 (defconst cargo-process-test-regexp "^[[:space:]]*fn[[:space:]]*"
   "Regex to find Rust unit test function.")
 
-(defconst cargo-process-test-mod-regexp "^[[:space:]]*mod[[:space:]]*\\w+[[:space:]]*{")
+(defconst cargo-process-test-mod-regexp "^[[:space:]]*mod[[:space:]]+[[:word:][:multibyte:]_][[:word:][:multibyte:]_[:digit:]]*[[:space:]]*{")
 
 (defconst cargo-process-font-lock-keywords
   '(("^error\\:?" . 'cargo-process--error-face)
