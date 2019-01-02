@@ -215,6 +215,34 @@
 (defconst cargo-process--errno-regex "\\bE[0-9]\\{4\\}\\b"
   "A regular expression to match Rust error number.")
 
+(defconst cargo-process--lib-root-regexp "lib.rs")
+
+(defconst cargo-process--bin-root-regexp "\\(main\\.rs\\)\\|\\(bin\\/[[:word:][:multibyte:]_][[:word:][:multibyte:]_[:digit:]]*\\.rs\\)")
+
+;; NOTE: This function was added in Emacs 24.4 in the `subr-x' library. This package currently requires Emacs 24.3.
+(defsubst string-remove-prefix (prefix string)
+  "Remove PREFIX from STRING if present."
+  (if (string-prefix-p prefix string)
+      (substring string (length prefix))
+    string))
+
+;; NOTE: This function exists in Emacs >= 25.3.
+(defsubst string-join (separator string)
+  "Interpose `string' with `separator'"
+  (mapconcat 'identity string separator))
+
+(defun cargo-process--split-path-1 (path accum)
+  "Helper for cargo-process--split-path"
+  (if-let ((dir-name (file-name-directory path)))
+      (let* ((dir  (directory-file-name (file-name-directory path)))
+             (name (file-name-nondirectory path)))
+        (cargo-process--split-path-1 dir (cons name accum)))
+    (cons path accum)))
+
+(defun cargo-process--split-path (path)
+  "Returns a list of the components in `path'."
+  (cargo-process--split-path-1 path ()))
+
 (define-button-type 'rustc-errno
   'follow-link t
   'face 'cargo-process--errno-face
@@ -358,16 +386,46 @@ Meant to be run as a `compilation-filter-hook'."
            (function-name (car lines)))
       function-name)))
 
+(defun cargo-process--convert-path-to-module (path)
+  "Converts a path to the equivalent module path in Rust.
+   Example: 'evaluator/evaluator.rs' ~> 'evalulator::evaluator'
+   Example: 'bin/foo/foo.rs' ~> 'foo::foo'"
+  (let* ((components (cargo-process--split-path path))
+         (module-path (string-join "::" components)))
+    (string-remove-prefix "bin::" ;; remove leading `bin' for binary modules
+                          (string-remove-suffix "::mod" module-path)))) ;; remove trailing mod for `mod.rs' modules
+
+(defun cargo-process--lib-rootp (path)
+  "Indicates if the `path' relative to the crate root is the (default) Cargo library entry point"
+  (string-match cargo-process--lib-root-regexp path))
+
+(defun cargo-process--bin-rootp (path)
+  "Indicates if the `path' relative to the project root is any of the (default) Cargo binary entry points."
+  (string-match cargo-process--bin-root-regexp path))
+
+(defun cargo-process--get-module-prefix ()
+  "Return the prefix of the module path starting from the crate root to the current buffer."
+  (let* ((project-root (cargo-process--project-root))
+         (path (string-remove-prefix (concat project-root (file-name-as-directory "src"))
+                                     buffer-file-name)))
+    (if (or (cargo-process--lib-rootp path)
+            (cargo-process--bin-rootp path))
+        nil
+      (cargo-process--convert-path-to-module (string-remove-suffix ".rs" path)))))
+
 (defun cargo-process--get-current-mod ()
-  "Return the current mod."
+  "Return the current fully-qualified module path."
   (save-excursion
     (when (search-backward-regexp cargo-process-test-mod-regexp nil t)
       (let* ((line (buffer-substring-no-properties (line-beginning-position)
                                                    (line-end-position)))
              (line (string-trim-left line))
              (lines (split-string line " \\|{"))
-             (mod (cadr lines)))
-        mod))))
+             (mod (cadr lines))
+             (module-prefix (cargo-process--get-module-prefix)))
+        (if module-prefix
+            (concat module-prefix "::" mod)
+          mod)))))
 
 (defun cargo-process--get-current-test-fullname ()
   (if (cargo-process--get-current-mod)
