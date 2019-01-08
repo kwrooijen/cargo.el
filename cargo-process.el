@@ -77,7 +77,7 @@
 
 (defcustom cargo-process--enable-rust-backtrace nil
   "Set RUST_BACKTRACE environment variable to 1 for tasks test and run"
-  :type 'bool
+  :type 'boolean
   :group 'cargo-process)
 
 (defcustom cargo-process--command-flags ""
