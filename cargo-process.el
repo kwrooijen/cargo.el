@@ -39,6 +39,7 @@
 ;;  * cargo-process-repeat             - Run the last cargo-process command.
 ;;  * cargo-process-current-test       - Run the current unit test.
 ;;  * cargo-process-current-file-tests - Run the current file unit tests.
+;;  * cargo-process-expand             - Run the optional cargo command expand.
 ;;  * cargo-process-fmt                - Run the optional cargo command fmt.
 ;;  * cargo-process-check              - Run the optional cargo command check.
 ;;  * cargo-process-clippy             - Run the optional cargo command clippy.
@@ -140,6 +141,9 @@
 
 (defcustom cargo-process--command-update "update"
   "Subcommand used by `cargo-process-update'.")
+
+(defcustom cargo-process--command-expand "expand --color never"
+  "Subcommand used by `cargo-process-expand'.")
 
 (defcustom cargo-process--command-fmt "fmt"
   "Subcommand used by `cargo-process-fmt'.")
@@ -553,6 +557,14 @@ With the prefix argument, modify the command's invocation.
 Cargo: Update dependencies listed in Cargo.lock."
   (interactive)
   (cargo-process--start "Update" cargo-process--command-update))
+
+;;;###autoload
+(defun cargo-process-expand ()
+  "Run the Cargo expand command.
+With the prefix argument, modify the command's invocation.
+Requires cargo-expand to be installed."
+  (interactive)
+  (cargo-process--start "Expand" cargo-process--command-expand))
 
 ;;;###autoload
 (defun cargo-process-fmt ()
