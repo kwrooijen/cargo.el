@@ -392,11 +392,13 @@ Meant to be run as a `compilation-filter-hook'."
     (error "Cannot expand: current buffer has no file")))
 
 (defun cargo-process--get-current-test-fullname ()
-  (if (cargo-process--get-current-mod)
-      (concat (cargo-process--get-current-mod)
-              "::"
-              (cargo-process--get-current-test))
-    (cargo-process--get-current-test)))
+  "Return the full name of the current test."
+  (let ((current-mod (cargo-process--get-current-mod)))
+    (if current-mod
+        (concat current-mod
+                "::"
+                (cargo-process--get-current-test))
+      (cargo-process--get-current-test))))
 
 (defun cargo-process--maybe-read-command (default)
   "Prompt to modify the DEFAULT command when the prefix argument is present.
@@ -406,8 +408,7 @@ Without the prefix argument, return DEFAULT immediately."
     default))
 
 (defun cargo-process--get-dependencies (&optional manifest)
-  "Extract the list of dependencies from the
-MANIFEST (i.e. Cargo.toml)."
+  "Extract the list of dependencies from the MANIFEST (i.e. Cargo.toml)."
   (with-current-buffer (find-file-noselect (or manifest
                                                (cargo-process--project-root "Cargo.toml")))
     (save-excursion
