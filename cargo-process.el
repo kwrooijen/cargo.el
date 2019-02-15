@@ -23,29 +23,30 @@
 ;; Cargo Process Major mode.
 ;; Used to run Cargo background processes.
 ;; Current supported Cargo functions:
-;;  * cargo-process-bench              - Run the benchmarks.
-;;  * cargo-process-build              - Compile the current project.
-;;  * cargo-process-clean              - Remove the target directory.
-;;  * cargo-process-doc                - Build this project's and its dependencies' documentation.
-;;  * cargo-process-doc-open           - Open this project's documentation.
-;;  * cargo-process-new                - Create a new cargo project.
-;;  * cargo-process-init               - Create a new cargo project inside an existing directory.
-;;  * cargo-process-run                - Build and execute src/main.rs.
-;;  * cargo-process-run-example        - Build and execute with --example <name>.
-;;  * cargo-process-run-bin            - Build and execute a specific binary.
-;;  * cargo-process-search             - Search registry for crates.
-;;  * cargo-process-test               - Run all unit tests.
-;;  * cargo-process-update             - Update dependencies listed in Cargo.lock.
-;;  * cargo-process-repeat             - Run the last cargo-process command.
-;;  * cargo-process-current-test       - Run the current unit test.
-;;  * cargo-process-current-file-tests - Run the current file unit tests.
-;;  * cargo-process-expand             - Run the optional cargo command expand.
-;;  * cargo-process-fmt                - Run the optional cargo command fmt.
-;;  * cargo-process-check              - Run the optional cargo command check.
-;;  * cargo-process-clippy             - Run the optional cargo command clippy.
-;;  * cargo-process-add                - Run the optional cargo command add.
-;;  * cargo-process-rm                 - Run the optional cargo command rm.
-;;  * cargo-process-upgrade            - Run the optional cargo command upgrade.
+;;  * cargo-process-bench               - Run the benchmarks.
+;;  * cargo-process-build               - Compile the current project.
+;;  * cargo-process-clean               - Remove the target directory.
+;;  * cargo-process-doc                 - Build this project's and its dependencies' documentation.
+;;  * cargo-process-doc-open            - Open this project's documentation.
+;;  * cargo-process-new                 - Create a new cargo project.
+;;  * cargo-process-init                - Create a new cargo project inside an existing directory.
+;;  * cargo-process-run                 - Build and execute src/main.rs.
+;;  * cargo-process-run-example         - Build and execute with --example <name>.
+;;  * cargo-process-run-bin             - Build and execute a specific binary.
+;;  * cargo-process-search              - Search registry for crates.
+;;  * cargo-process-test                - Run all unit tests.
+;;  * cargo-process-update              - Update dependencies listed in Cargo.lock.
+;;  * cargo-process-repeat              - Run the last cargo-process command.
+;;  * cargo-process-current-test        - Run the current unit test.
+;;  * cargo-process-current-file-tests  - Run the current file unit tests.
+;;  * cargo-process-expand              - Run the optional cargo command expand.
+;;  * cargo-process-current-file-expand - Run the optional cargo command expand on the current file.
+;;  * cargo-process-fmt                 - Run the optional cargo command fmt.
+;;  * cargo-process-check               - Run the optional cargo command check.
+;;  * cargo-process-clippy              - Run the optional cargo command clippy.
+;;  * cargo-process-add                 - Run the optional cargo command add.
+;;  * cargo-process-rm                  - Run the optional cargo command rm.
+;;  * cargo-process-upgrade             - Run the optional cargo command upgrade.
 
 ;;
 ;;; Code:
@@ -144,6 +145,9 @@
 
 (defcustom cargo-process--command-expand "expand --color never"
   "Subcommand used by `cargo-process-expand'.")
+
+(defcustom cargo-process--command-current-file-expand "expand --color never"
+  "Subcommand used by `cargo-process-current-file-expand'.")
 
 (defcustom cargo-process--command-fmt "fmt"
   "Subcommand used by `cargo-process-fmt'.")
@@ -373,6 +377,20 @@ Meant to be run as a `compilation-filter-hook'."
              (mod (cadr lines)))
         mod))))
 
+(defun cargo-process--get-current-file-type ()
+  "Return the name of the current source directory (bench, example, lib, test) or nil."
+  (if buffer-file-truename
+      (let* ((project-root (cargo-process--project-root))
+             (relative-name (file-relative-name buffer-file-truename project-root))
+             (root relative-name))
+        (while (file-name-directory root)
+          (setq root (directory-file-name (file-name-directory root))))
+        (pcase (file-name-nondirectory root)
+          ("tests" "test")
+          ((or "bench" "example") root)
+          (_ (error "Cannot expand: file is in unknown directory %S," root))))
+    (error "Cannot expand: current buffer has no file")))
+
 (defun cargo-process--get-current-test-fullname ()
   (if (cargo-process--get-current-mod)
       (concat (cargo-process--get-current-mod)
@@ -566,6 +584,17 @@ Requires cargo-expand to be installed."
   (interactive)
   (cargo-process--start "Expand" cargo-process--command-expand))
 
+;;;###autoload
+(defun cargo-process-current-file-expand ()
+  "Run the Cargo expand command on the current file.
+With the prefix argument, modify the command's invocation.
+Requires cargo-expand to be installed."
+  (interactive)
+  (cargo-process--start "Expand" (concat cargo-process--command-current-file-expand
+                                         " --"
+                                         (cargo-process--get-current-file-type)
+                                         " "
+                                         (file-name-base buffer-file-truename))))
 ;;;###autoload
 (defun cargo-process-fmt ()
   "Run the Cargo fmt command.
