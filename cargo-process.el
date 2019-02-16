@@ -96,6 +96,9 @@
 
 (defvar cargo-process-last-command nil "Command used last for repeating.")
 
+(defvar cargo-process--expand-last-file nil
+  "Holds the truename of the file that current-file-expand-and-compile.")
+
 (make-variable-buffer-local 'cargo-process-last-command)
 
 (defcustom cargo-process--command-bench "bench"
@@ -254,6 +257,45 @@
   (compilation-sentinel process event)
   (when (equal event "finished\n")
     (message "Cargo Process finished.")))
+
+(defun cargo-process--rust-content-region (buffer)
+  "Find the region of the rust source code in the BUFFER."
+  (save-current-buffer
+    (set-buffer buffer)
+    (save-excursion
+      (goto-char (point-min))
+      (let* ((end-of-compiler-output (or (re-search-forward "Finished dev \\[unoptimized \\+ debuginfo] target(s) in [0-9]+\\.[0-9]+s" nil t)
+                                         (error "Could not find end of prefix")))
+             (beginning-of-code (point-marker))
+             (_ (goto-char (point-max)))
+             (beginning-of-final (or (re-search-backward "Cargo-Process finished at" nil t)
+                                     (error "Could not find beginning of suffix")))
+             (end-of-code (point-marker)))
+        (message "Found rust content region: (%S .. %S)" end-of-compiler-output beginning-of-final)
+        (list beginning-of-code end-of-code)))))
+
+(defun cargo-process--expand-finished-sentinel (process event)
+  "Turn on rust syntax highlighting in the Expand buffer.
+
+Execute after PROCESS return and EVENT is 'finished'."
+  (cargo-process--finished-sentinel process event)
+  (when (equal event "finished\n")
+    (message "Separating Rust output...")
+    (let* ((expand-buffer "*Cargo Expand*")
+           (expanded-content-region (cargo-process--rust-content-region expand-buffer))
+           (expanded-region-start (first expanded-content-region))
+           (expanded-region-end  (second expanded-content-region))
+           (last-file cargo-process--expand-last-file)
+           (expanded-file (concat (file-name-sans-extension last-file) "_expanded.rs")))
+      (find-file-other-window expanded-file)
+      (delete-region (point-min) (point-max))
+      (insert-buffer-substring expand-buffer
+                               expanded-region-start
+                               expanded-region-end)
+      ;; clean up markers
+      (set-marker expanded-region-start nil)
+      (set-marker expanded-region-end nil))
+    (message "Cargo Expand finished.")))
 
 (defun cargo-process--activate-mode (buffer)
   "Execute commands BUFFER at process start."
@@ -591,11 +633,14 @@ Requires cargo-expand to be installed."
 With the prefix argument, modify the command's invocation.
 Requires cargo-expand to be installed."
   (interactive)
+  (setq cargo-process--expand-last-file (file-truename (buffer-file-name)))
   (cargo-process--start "Expand" (concat cargo-process--command-current-file-expand
                                          " --"
                                          (cargo-process--get-current-file-type)
                                          " "
-                                         (file-name-base buffer-file-truename))))
+                                         (file-name-base buffer-file-truename)))
+  (set-process-sentinel (get-buffer-process "*Cargo Expand*") 'cargo-process--expand-finished-sentinel))
+
 ;;;###autoload
 (defun cargo-process-fmt ()
   "Run the Cargo fmt command.
