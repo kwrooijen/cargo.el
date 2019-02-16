@@ -37,6 +37,9 @@ You will now have the following key combinations at your disposal:
  <kbd>C-c C-c C-c</kbd> | cargo-process-repeat
  <kbd>C-c C-c C-f</kbd> | cargo-process-current-test
  <kbd>C-c C-c C-o</kbd> | cargo-process-current-file-tests
+ <kbd>C-c C-c C-p</kbd> | cargo-process-expand
+ <kbd>C-c C-c C-S-p</kbd> | cargo-process-current-file-expand
+ <kbd>C-c C-c M-p</kbd> | cargo-process-current-file-expand-and-compile
  <kbd>C-c C-c C-m</kbd> | cargo-process-fmt
  <kbd>C-c C-c C-k</kbd> | cargo-process-check
  <kbd>C-c C-c C-S-k</kbd> | cargo-process-clippy
@@ -70,6 +73,8 @@ Here's a list of commands and their default value.
 (setq cargo-process--command-current-test "test")
 (setq cargo-process--command-current-file-tests "test")
 (setq cargo-process--command-update "update")
+(setq cargo-process--command-expand "expand --color never")
+(setq cargo-process--command-expand "expand --color never")
 (setq cargo-process--command-fmt "fmt")
 (setq cargo-process--command-check "check")
 (setq cargo-process--command-clippy "clippy")
@@ -91,6 +96,15 @@ processes.
 [compilation mode]: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation-Mode.html
 
 ## Notes
+
+In order to run `cargo-process-expand`,
+`cargo-process-current-file-expand`, or
+`cargo-process-current-file-expand-and-compile` you need to have the
+`cargo-expand` package installed.
+
+```
+cargo install cargo-expand
+```
 
 In order to run `cargo-process-fmt` you need to have the `rustfmt` package installed.
 
@@ -116,4 +130,3 @@ In order to run `cargo-process-{add,rm,upgrade}` you need to have the `cargo-edi
 cargo install cargo-edit
 ```
 For completion in `cargo-process-add`, configure `cargo-process-favorite-crates`.
-
