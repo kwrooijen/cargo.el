@@ -152,6 +152,9 @@
 (defcustom cargo-process--command-current-file-expand "expand --color never"
   "Subcommand used by `cargo-process-current-file-expand'.")
 
+(defcustom cargo-process--command-current-file-expand-and-compile "+nightly build --"
+  "Subcommand used to build expanded output by `cargo-process-current-file-expand-and-compile'.")
+
 (defcustom cargo-process--command-fmt "fmt"
   "Subcommand used by `cargo-process-fmt'.")
 
@@ -296,6 +299,20 @@ Execute after PROCESS return and EVENT is 'finished'."
       (set-marker expanded-region-start nil)
       (set-marker expanded-region-end nil))
     (message "Cargo Expand finished.")))
+
+(defun cargo-process--expand-and-compile-finished-sentinel (process event)
+  "Copy expanded output to a new file and compile that.
+
+Execute after PROCESS return and EVENT is 'finished'."
+  (cargo-process--expand-finished-sentinel process event)
+  (when (equal event "finished\n")
+    (goto-char (point-min))
+    (insert "#![feature(box_syntax, test, fmt_internals)]\n")
+    (save-buffer)
+    (cargo-process--start "Expanded Build" (concat cargo-process--command-current-file-expand-and-compile
+                                                   (cargo-process--get-current-file-type)
+                                                   " "
+                                                   (file-name-base buffer-file-truename)))))
 
 (defun cargo-process--activate-mode (buffer)
   "Execute commands BUFFER at process start."
@@ -640,6 +657,20 @@ Requires cargo-expand to be installed."
                                          " "
                                          (file-name-base buffer-file-truename)))
   (set-process-sentinel (get-buffer-process "*Cargo Expand*") 'cargo-process--expand-finished-sentinel))
+
+;;;###autoload
+(defun cargo-process-current-file-expand-and-compile ()
+  "Run the Cargo expand command on the current file.
+With the prefix argument, modify the command's invocation.
+Requires cargo-expand to be installed."
+  (interactive)
+  (setq cargo-process--expand-last-file (file-truename (buffer-file-name)))
+  (cargo-process--start "Expand" (concat cargo-process--command-current-file-expand
+                                         " --"
+                                         (cargo-process--get-current-file-type)
+                                         " "
+                                         (file-name-base buffer-file-truename)))
+  (set-process-sentinel (get-buffer-process "*Cargo Expand*") 'cargo-process--expand-and-compile-finished-sentinel))
 
 ;;;###autoload
 (defun cargo-process-fmt ()
