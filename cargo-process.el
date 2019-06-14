@@ -475,7 +475,9 @@ If BIN is t then create a binary application, otherwise a library.
 Cargo: Create a new cargo project in current directory."
   (interactive
    (list (read-directory-name "Directory: " nil default-directory t)))
-  (let ((bin (when (or bin (y-or-n-p "Create Bin Project? ")) " --bin")))
+  (let ((bin (if (or bin (y-or-n-p "Create Bin Project? "))
+                 " --bin"
+                 " --lib")))
     (cargo-process--start "Init" (concat cargo-process--command-init
                                          " "
                                          directory
