@@ -265,7 +265,7 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
   "Find the workspace root using `cargo metadata`."
   (when (cargo-process--project-root)
     (let* ((metadata-text (shell-command-to-string
-                           (concat cargo-process--custom-path-to-bin
+                           (concat (shell-quote-argument cargo-process--custom-path-to-bin)
                                    " metadata --format-version 1 --no-deps")))
            (metadata-json (json-read-from-string metadata-text))
            (workspace-root (cdr (assoc 'workspace_root metadata-json))))
@@ -286,7 +286,7 @@ OPENS-EXTERNAL is non-nil if the COMMAND is expected to open an external applica
           (or last-cmd
               (cargo-process--maybe-read-command
                (cargo-process--augment-cmd-for-os opens-external
-                                                  (mapconcat #'identity (list cargo-process--custom-path-to-bin
+                                                  (mapconcat #'identity (list (shell-quote-argument cargo-process--custom-path-to-bin)
                                                                               command
                                                                               (manifest-path-argument name)
                                                                               cargo-process--command-flags)
