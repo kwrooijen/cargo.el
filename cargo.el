@@ -40,6 +40,7 @@
 ;;  * C-c C-c C-c - cargo-process-repeat
 ;;  * C-c C-c C-f - cargo-process-current-test
 ;;  * C-c C-c C-o - cargo-process-current-file-tests
+;;  * C-c C-c C-O - cargo-process-outdated
 ;;  * C-c C-c C-m - cargo-process-fmt
 ;;  * C-c C-c C-k - cargo-process-check
 ;;  * C-c C-c C-K - cargo-process-clippy
@@ -82,6 +83,7 @@
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-c") 'cargo-process-repeat)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-f") 'cargo-process-current-test)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-o") 'cargo-process-current-file-tests)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-S-o") 'cargo-process-outdated)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-m") 'cargo-process-fmt)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-k") 'cargo-process-check)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-S-k") 'cargo-process-clippy)

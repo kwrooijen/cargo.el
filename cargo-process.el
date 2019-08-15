@@ -45,6 +45,7 @@
 ;;  * cargo-process-add                - Run the optional cargo command add.
 ;;  * cargo-process-rm                 - Run the optional cargo command rm.
 ;;  * cargo-process-upgrade            - Run the optional cargo command upgrade.
+;;  * cargo-process-outdated           - Run the optional cargo command outdated.
 
 ;;
 ;;; Code:
@@ -143,6 +144,9 @@
 
 (defcustom cargo-process--command-fmt "fmt"
   "Subcommand used by `cargo-process-fmt'.")
+
+(defcustom cargo-process--command-outdated "outdated -R"
+  "Subcommand used by `cargo-process-outdated'.")
 
 (defcustom cargo-process--command-check "check"
   "Subcommand used by `cargo-process-check'.")
@@ -563,6 +567,14 @@ With the prefix argument, modify the command's invocation.
 Requires Cargo Fmt to be installed."
   (interactive)
   (cargo-process--start "Fmt" cargo-process--command-fmt))
+
+;;;###autoload
+(defun cargo-process-outdated ()
+  "Run the Cargo outdated command.
+With the prefix argument, modify the command's invocation.
+Requires Cargo Outdated to be installed."
+  (interactive)
+  (cargo-process--start "Outdated" cargo-process--command-outdated))
 
 ;;;###autoload
 (defun cargo-process-check ()
