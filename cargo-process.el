@@ -283,7 +283,8 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
 
 (defun cargo-process--start (name command &optional last-cmd opens-external)
   "Start the Cargo process NAME with the cargo command COMMAND.
-OPENS-EXTERNAL is non-nil if the COMMAND is expected to open an external application."
+OPENS-EXTERNAL is non-nil if the COMMAND is expected to open an external application.
+Returns the created process."
   (set-rust-backtrace command)
   (let* ((buffer (concat "*Cargo " name "*"))
          (project-root (cargo-process--project-root))
@@ -306,7 +307,9 @@ OPENS-EXTERNAL is non-nil if the COMMAND is expected to open an external applica
     (let ((default-directory (or (cargo-process--workspace-root)
                                  default-directory)))
       (compilation-start cmd 'cargo-process-mode (lambda(_) buffer)))
-    (set-process-sentinel (get-buffer-process buffer) 'cargo-process--finished-sentinel)))
+    (let ((process (get-buffer-process buffer)))
+      (set-process-sentinel process 'cargo-process--finished-sentinel)
+      process)))
 
 (defun cargo-process--explain-action (button)
   "Action called when the user activates Rust errno BUTTON."
@@ -482,13 +485,25 @@ Cargo: Create a new cargo project in current directory.
 DIRECTORY is created if necessary."
   (interactive
    (list (read-directory-name "Directory: " nil default-directory nil)))
-  (let ((bin (if (or bin (y-or-n-p "Create Bin Project? "))
-                 " --bin"
-                 " --lib")))
-    (cargo-process--start "Init" (concat cargo-process--command-init
-                                         " "
-                                         directory
-                                         bin))))
+  (let* ((bin (if (or bin (y-or-n-p "Create Bin Project? "))
+                  " --bin"
+                " --lib"))
+         (process
+          (cargo-process--start "Init" (concat cargo-process--command-init
+                                               " "
+                                               directory
+                                               bin))))
+    (set-process-sentinel
+     process
+     (lambda (process event)
+       (cargo-process--open-manifest process
+                                     event
+                                     (expand-file-name "Cargo.toml" directory))))))
+
+(defun cargo-process--open-manifest (process event manifest-path)
+  "Open the manifest file when process ends."
+  (when (equal event "finished\n")
+    (find-file manifest-path)))
 
 ;;;###autoload
 (defun cargo-process-run ()
