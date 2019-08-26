@@ -476,9 +476,11 @@ Cargo: Create a new cargo project."
 With the prefix argument, modify the command's invocation.
 DIRECTORY is the directory you want to create a cargo project in.
 If BIN is t then create a binary application, otherwise a library.
-Cargo: Create a new cargo project in current directory."
+Cargo: Create a new cargo project in current directory.
+
+DIRECTORY is created if necessary."
   (interactive
-   (list (read-directory-name "Directory: " nil default-directory t)))
+   (list (read-directory-name "Directory: " nil default-directory nil)))
   (let ((bin (if (or bin (y-or-n-p "Create Bin Project? "))
                  " --bin"
                  " --lib")))
