@@ -276,9 +276,10 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
       workspace-root)))
 
 (defun manifest-path-argument (name)
-  (when (and (cargo-process--project-root)
-             (not (member name cargo-process--no-manifest-commands)))
-    (concat "--manifest-path " (shell-quote-argument (cargo-process--project-root)) "Cargo.toml")))
+  (let ((manifest-filename (cargo-process--project-root "Cargo.toml")))
+    (when (and manifest-filename
+               (not (member name cargo-process--no-manifest-commands)))
+      (concat "--manifest-path " (shell-quote-argument manifest-filename)))))
 
 (defun cargo-process--start (name command &optional last-cmd opens-external)
   "Start the Cargo process NAME with the cargo command COMMAND.
