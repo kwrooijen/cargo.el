@@ -43,6 +43,7 @@ You will now have the following key combinations at your disposal:
  <kbd>C-c C-c C-a</kbd> | cargo-process-add
  <kbd>C-c C-c C-S-d</kbd> | cargo-process-rm
  <kbd>C-c C-c C-S-u</kbd> | cargo-process-upgrade
+ <kbd>C-c C-c C-S-a</kbd> | cargo-process-audit
 
 Before executing the task, Emacs will prompt you to save any modified buffers
 associated with the current Cargo project. Setting `compilation-ask-about-save`
@@ -76,6 +77,7 @@ Here's a list of commands and their default value.
 (setq cargo-process--command-add "add")
 (setq cargo-process--command-rm "rm")
 (setq cargo-process--command-upgrade "upgrade")
+(setq cargo-process--command-audit "audit -f")
 ```
 
 ### Advanced usage
@@ -117,3 +119,8 @@ cargo install cargo-edit
 ```
 For completion in `cargo-process-add`, configure `cargo-process-favorite-crates`.
 
+In order to run `cargo-process-audit` you need to have the `audit` package installed.
+
+```
+cargo install cargo-audit
+```
