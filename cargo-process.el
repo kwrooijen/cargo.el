@@ -46,6 +46,7 @@
 ;;  * cargo-process-rm                 - Run the optional cargo command rm.
 ;;  * cargo-process-upgrade            - Run the optional cargo command upgrade.
 ;;  * cargo-process-outdated           - Run the optional cargo command outdated.
+;;  * cargo-process-audit              - Run the optional cargo command audit.
 
 ;;
 ;;; Code:
@@ -90,7 +91,7 @@
   "Keymap for Cargo major mode.")
 
 (defvar cargo-process--no-manifest-commands
-  '("New" "Init" "Search" "Fmt")
+  '("New" "Init" "Search" "Fmt" "Audit")
   "These commands should not specify a manifest file.")
 
 (defvar cargo-process-last-command nil "Command used last for repeating.")
@@ -162,6 +163,9 @@
 
 (defcustom cargo-process--command-upgrade "upgrade"
   "Subcommand used by `cargo-process-upgrade'.")
+
+(defcustom cargo-process--command-audit "audit -f"
+  "Subcommand used by `cargo-process-audit'.")
 
 (defvar cargo-process-favorite-crates nil)
 
@@ -623,6 +627,17 @@ Cargo: This command allows you to add a dependency to a Cargo.toml manifest file
   (cargo-process--start "Add" (concat cargo-process--command-add
                                       " "
                                       crate)))
+
+;;;###autoload
+(defun cargo-process-audit ()
+  "Run the Cargo audit command.
+With the prefix argument, modify the command's invocation.
+Cargo: Audit checks the current project's Cargo.lock for security vulnerabilities.
+Requires Cargo Audit to be installed."
+  (interactive)
+  (cargo-process--start "Audit" (concat cargo-process--command-audit
+                                        " "
+                                        (cargo-process--project-root "Cargo.lock"))))
 
 ;;;###autoload
 (defun cargo-process-rm (crate)
