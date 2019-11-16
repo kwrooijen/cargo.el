@@ -47,6 +47,7 @@
 ;;  * C-c C-c C-a - cargo-process-add
 ;;  * C-c C-c C-D - cargo-process-rm
 ;;  * C-c C-c C-U - cargo-process-upgrade
+;;  * C-c C-c C-A - cargo-process-audit
 
 ;;
 ;;; Code:
@@ -90,6 +91,7 @@
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-a") 'cargo-process-add)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-S-d") 'cargo-process-rm)
 (define-key cargo-minor-mode-map (kbd "C-c C-c C-S-u") 'cargo-process-upgrade)
+(define-key cargo-minor-mode-map (kbd "C-c C-c C-S-a") 'cargo-process-audit)
 
 (provide 'cargo)
 ;;; cargo.el ends here
