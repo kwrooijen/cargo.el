@@ -2,6 +2,13 @@
 
 Cargo mode for Emacs. This package gives you a set of key combinations to perform Cargo tasks within your Rust projects.
 
+## NOTICE
+
+Currently I'm not using Rust, nor will I in the (near) future. I've lost track
+of all the Rust / Cargo features available and can keep up-to-date with new
+ones. I won't be doing bug fixes but will keep reviewing / merging Pull
+requests.
+
 ## Installation
 
 This package can be installed through [melpa](https://melpa.org/):
