@@ -84,7 +84,8 @@
 
 (defcustom cargo-process--command-flags ""
   "Flags to be added to every cargo command when run."
-  :group 'cargo-process)
+  :group 'cargo-process
+  :type 'string)
 
 (defvar cargo-process-mode-map
   (nconc (make-sparse-keymap) compilation-mode-map)
@@ -99,73 +100,96 @@
 (make-variable-buffer-local 'cargo-process-last-command)
 
 (defcustom cargo-process--command-bench "bench"
-  "Subcommand used by `cargo-process-bench'.")
+  "Subcommand used by `cargo-process-bench'."
+  :type 'string)
 
 (defcustom cargo-process--command-build "build"
-  "Subcommand used by `cargo-process-build'.")
+  "Subcommand used by `cargo-process-build'."
+  :type 'string)
 
 (defcustom cargo-process--command-clean "clean"
-  "Subcommand used by `cargo-process-clean'.")
+  "Subcommand used by `cargo-process-clean'."
+  :type 'string)
 
 (defcustom cargo-process--command-doc "doc"
-  "Subcommand used by `cargo-process-doc'.")
+  "Subcommand used by `cargo-process-doc'."
+  :type 'string)
 
 (defcustom cargo-process--command-doc-open "doc --open"
-  "Subcommand used by `cargo-process-doc'.")
+  "Subcommand used by `cargo-process-doc'."
+  :type 'string)
 
 (defcustom cargo-process--command-new "new"
-  "Subcommand used by `cargo-process-new'.")
+  "Subcommand used by `cargo-process-new'."
+  :type 'string)
 
 (defcustom cargo-process--command-init "init"
-  "Subcommand used by `cargo-process-init'.")
+  "Subcommand used by `cargo-process-init'."
+  :type 'string)
 
 (defcustom cargo-process--command-run "run"
-  "Subcommand used by `cargo-process-run'.")
+  "Subcommand used by `cargo-process-run'."
+  :type 'string)
 
 (defcustom cargo-process--command-run-bin "run --bin"
-  "Subcommand used by `cargo-process-run-bin'.")
+  "Subcommand used by `cargo-process-run-bin'."
+  :type 'string)
 
 (defcustom cargo-process--command-run-example "run --example"
-  "Subcommand used by `cargo-process-run-example'.")
+  "Subcommand used by `cargo-process-run-example'."
+  :type 'string)
 
 (defcustom cargo-process--command-search "search"
-  "Subcommand used by `cargo-process-search'.")
+  "Subcommand used by `cargo-process-search'."
+  :type 'string)
 
 (defcustom cargo-process--command-test "test"
-  "Subcommand used by `cargo-process-test'.")
+  "Subcommand used by `cargo-process-test'."
+  :type 'string)
 
 (defcustom cargo-process--command-current-test "test"
-  "Subcommand used by `cargo-process-current-test'.")
+  "Subcommand used by `cargo-process-current-test'."
+  :type 'string)
 
 (defcustom cargo-process--command-current-file-tests "test"
-  "Subcommand used by `cargo-process-current-file-tests'.")
+  "Subcommand used by `cargo-process-current-file-tests'."
+  :type 'string)
 
 (defcustom cargo-process--command-update "update"
-  "Subcommand used by `cargo-process-update'.")
+  "Subcommand used by `cargo-process-update'."
+  :type 'string)
 
 (defcustom cargo-process--command-fmt "fmt"
-  "Subcommand used by `cargo-process-fmt'.")
+  "Subcommand used by `cargo-process-fmt'."
+  :type 'string)
 
 (defcustom cargo-process--command-outdated "outdated -R"
-  "Subcommand used by `cargo-process-outdated'.")
+  "Subcommand used by `cargo-process-outdated'."
+  :type 'string)
 
 (defcustom cargo-process--command-check "check"
-  "Subcommand used by `cargo-process-check'.")
+  "Subcommand used by `cargo-process-check'."
+  :type 'string)
 
 (defcustom cargo-process--command-clippy "clippy"
-  "Subcommand used by `cargo-process-clippy'.")
+  "Subcommand used by `cargo-process-clippy'."
+  :type 'string)
 
 (defcustom cargo-process--command-add "add"
-  "Subcommand used by `cargo-process-add'.")
+  "Subcommand used by `cargo-process-add'."
+  :type 'string)
 
 (defcustom cargo-process--command-rm "rm"
-  "Subcommand used by `cargo-process-rm'.")
+  "Subcommand used by `cargo-process-rm'."
+  :type 'string)
 
 (defcustom cargo-process--command-upgrade "upgrade"
-  "Subcommand used by `cargo-process-upgrade'.")
+  "Subcommand used by `cargo-process-upgrade'."
+  :type 'string)
 
 (defcustom cargo-process--command-audit "audit -f"
-  "Subcommand used by `cargo-process-audit'.")
+  "Subcommand used by `cargo-process-audit'."
+  :type 'string)
 
 (defvar cargo-process-favorite-crates nil)
 
