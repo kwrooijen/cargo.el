@@ -88,7 +88,8 @@ allows you to add flags like `--release`, for example.
 
 Processes run via Cargo mode make use of [compilation mode][]. This
 mode provides features like jumping to errors or killing runaway
-processes.
+processes. By default, in `compilation mode`, <kbd>C-c C-k</kbd> is bound
+to the command `kill-compilation`.
 
 [compilation mode]: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation-Mode.html
 
