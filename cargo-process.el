@@ -293,13 +293,22 @@ Always set to nil if cargo-process--enable-rust-backtrace is nil"
       (setenv cargo-process--rust-backtrace "1")
     (setenv cargo-process--rust-backtrace nil)))
 
+(defun cargo-json-read-from-string (text)
+  "A wrapper for `json-read-from-string' with improved error reporting.
+
+This assumes that TEXT is a human readable error, which is used
+for error reporting."
+  (condition-case nil
+      (json-read-from-string text)
+    (error (user-error text))))
+
 (defun cargo-process--workspace-root ()
   "Find the workspace root using `cargo metadata`."
   (when (cargo-process--project-root)
     (let* ((metadata-text (shell-command-to-string
                            (concat (shell-quote-argument cargo-process--custom-path-to-bin)
                                    " metadata --format-version 1 --no-deps")))
-           (metadata-json (json-read-from-string metadata-text))
+           (metadata-json (cargo-json-read-from-string metadata-text))
            (workspace-root (cdr (assoc 'workspace_root metadata-json))))
       workspace-root)))
 
