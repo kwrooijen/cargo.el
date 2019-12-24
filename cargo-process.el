@@ -574,9 +574,19 @@ Cargo: Build and execute with --example <name>."
 With the prefix argument, modify the command's invocation.
 SEARCH-TERM is used as the search term for the Cargo registry.
 Cargo: Search registry for crates."
-  (interactive "sSearch: ")
+  (interactive
+   (list (cargo-process--read-search-term)))
   (cargo-process--start "Search"
                         (concat cargo-process--command-search " " search-term)))
+
+(defun cargo-process--read-search-term ()
+  "Prompt for a search term, using the crate name at point (if
+any) as the default if none is entered."
+  (let* ((default-search-term (and (thing-at-point-looking-at "[[:alnum:]-_]+") (match-string-no-properties 0)))
+         (default-prompt-text (if default-search-term (format " (default %s)" default-search-term) ""))
+         (search-term (read-string (format "Search%s: " default-prompt-text)
+                                   nil nil default-search-term)))
+    search-term))
 
 ;;;###autoload
 (defun cargo-process-test ()
