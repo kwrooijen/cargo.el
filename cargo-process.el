@@ -307,7 +307,7 @@ Execute after PROCESS return and EVENT is 'finished'."
   (cargo-process--expand-finished-sentinel process event)
   (when (equal event "finished\n")
     (goto-char (point-min))
-    (insert "#![feature(box_syntax, test, fmt_internals)]\n")
+    (insert "#![feature(box_syntax, fmt_internals, rustc_attrs, test)]\n")
     (save-buffer)
     (cargo-process--start "Expanded Build" (concat cargo-process--command-current-file-expand-and-compile
                                                    (cargo-process--get-current-file-type)
