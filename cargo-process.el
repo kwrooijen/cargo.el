@@ -87,6 +87,11 @@
   :group 'cargo-process
   :type 'string)
 
+(defcustom cargo-process--open-file-after-new nil
+  "Open the created project file after generating a new project"
+  :group 'cargo-process
+  :type 'boolean)
+
 (defvar cargo-process-mode-map
   (nconc (make-sparse-keymap) compilation-mode-map)
   "Keymap for Cargo major mode.")
@@ -502,14 +507,25 @@ NAME is the name of your application.
 If BIN is t then create a binary application, otherwise a library.
 Cargo: Create a new cargo project."
   (interactive "sProject name: ")
-  (let ((bin (if (or bin
-                     (y-or-n-p "Create Bin Project? "))
-                 " --bin"
-                 " --lib")))
-    (cargo-process--start "New" (concat cargo-process--command-new
-                                        " "
-                                        name
-                                        bin))))
+  (let* ((bin (if (or bin
+                      (y-or-n-p "Create Bin Project? "))
+                  " --bin"
+                " --lib"))
+         (command
+          (concat cargo-process--command-new " " name bin))
+         (process
+          (cargo-process--start "New" command)))
+    (set-process-sentinel
+     process
+     (lambda (process event)
+       (cond
+        ((and cargo-process--open-file-after-new
+              (string= " --bin" bin))
+         (find-file (format "%s/src/main.rs" name)))
+
+        ((and cargo-process--open-file-after-new
+              (string= " --lib" bin))
+         (find-file (format "%s/src/lib.rs" name))))))))
 
 ;;;###autoload
 (defun cargo-process-init (directory &optional bin)
