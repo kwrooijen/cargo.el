@@ -518,14 +518,16 @@ Cargo: Create a new cargo project."
     (set-process-sentinel
      process
      (lambda (process event)
-       (cond
-        ((and cargo-process--open-file-after-new
-              (string= " --bin" bin))
-         (find-file (format "%s/src/main.rs" name)))
+       (let* ((project-root (cargo-process--project-root))
+              (default-directory (or project-root default-directory)))
+         (cond
+          ((and cargo-process--open-file-after-new
+                (string= " --bin" bin))
+           (find-file (format "%s/src/main.rs" name)))
 
-        ((and cargo-process--open-file-after-new
-              (string= " --lib" bin))
-         (find-file (format "%s/src/lib.rs" name))))))))
+          ((and cargo-process--open-file-after-new
+                (string= " --lib" bin))
+           (find-file (format "%s/src/lib.rs" name)))))))))
 
 ;;;###autoload
 (defun cargo-process-init (directory &optional bin)
