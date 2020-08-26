@@ -5,8 +5,8 @@ Cargo mode for Emacs. This package gives you a set of key combinations to perfor
 ## NOTICE
 
 Currently I'm not using Rust, nor will I in the (near) future. I've lost track
-of all the Rust / Cargo features available and can keep up-to-date with new
-ones. I won't be doing bug fixes but will keep reviewing / merging Pull
+of all the Rust / Cargo features available and can't keep up-to-date with new
+ones. I'll be doing selective bug fixes and continue reviewing / merging pull
 requests.
 
 ## Installation
