@@ -176,8 +176,8 @@
   "Subcommand used by `cargo-process-check'."
   :type 'string)
 
-(defcustom cargo-process--command-clippy "clippy"
-  "Subcommand used by `cargo-process-clippy'."
+(defcustom cargo-process--command-clippy "clippy -Zunstable-options"
+  "Subcommand used by `cargo-process-clippy'. Uses `-Zunstable-options` to work around https://github.com/rust-lang/rust-clippy/issues/4612."
   :type 'string)
 
 (defcustom cargo-process--command-add "add"
