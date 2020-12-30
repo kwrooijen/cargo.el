@@ -24,30 +24,30 @@
 ;;
 ;; Cargo Minor mode.
 ;; Provides a number of key combinations and functions for managing Cargo.
-;; Current supported Cargo Key Combinations:
-;;  * C-c C-c C-e - cargo-process-bench
-;;  * C-c C-c C-b - cargo-process-build
-;;  * C-c C-c C-l - cargo-process-clean
-;;  * C-c C-c C-d - cargo-process-doc
-;;  * C-c C-c C-v - cargo-process-doc-open
-;;  * C-c C-c C-n - cargo-process-new
-;;  * C-c C-c C-i - cargo-process-init
-;;  * C-c C-c C-r - cargo-process-run
-;;  * C-c C-c C-x - cargo-process-run-example
-;;  * C-c C-c C-s - cargo-process-search
-;;  * C-c C-c C-t - cargo-process-test
-;;  * C-c C-c C-u - cargo-process-update
-;;  * C-c C-c C-c - cargo-process-repeat
-;;  * C-c C-c C-f - cargo-process-current-test
-;;  * C-c C-c C-o - cargo-process-current-file-tests
-;;  * C-c C-c C-O - cargo-process-outdated
-;;  * C-c C-c C-m - cargo-process-fmt
-;;  * C-c C-c C-k - cargo-process-check
-;;  * C-c C-c C-K - cargo-process-clippy
-;;  * C-c C-c C-a - cargo-process-add
-;;  * C-c C-c C-D - cargo-process-rm
-;;  * C-c C-c C-U - cargo-process-upgrade
-;;  * C-c C-c C-A - cargo-process-audit
+;; Current supported Cargo Key Combinations (with default prefix C-c C-c):
+;;  * C-e - cargo-process-bench
+;;  * C-b - cargo-process-build
+;;  * C-l - cargo-process-clean
+;;  * C-d - cargo-process-doc
+;;  * C-v - cargo-process-doc-open
+;;  * C-n - cargo-process-new
+;;  * C-i - cargo-process-init
+;;  * C-r - cargo-process-run
+;;  * C-x - cargo-process-run-example
+;;  * C-s - cargo-process-search
+;;  * C-t - cargo-process-test
+;;  * C-u - cargo-process-update
+;;  * C-c - cargo-process-repeat
+;;  * C-f - cargo-process-current-test
+;;  * C-o - cargo-process-current-file-tests
+;;  * C-O - cargo-process-outdated
+;;  * C-m - cargo-process-fmt
+;;  * C-k - cargo-process-check
+;;  * C-K - cargo-process-clippy
+;;  * C-a - cargo-process-add
+;;  * C-D - cargo-process-rm
+;;  * C-U - cargo-process-upgrade
+;;  * C-A - cargo-process-audit
 
 ;;
 ;;; Code:
@@ -59,39 +59,45 @@
   :prefix "cargo-"
   :group 'tools)
 
-(defvar cargo-minor-mode-map (make-keymap) "Cargo-mode keymap.")
 (defvar cargo-minor-mode nil)
+(defvar cargo-minor-mode-command-map
+  (let ((map (make-sparse-keymap "cargo")))
+    (define-key map (kbd "C-e")   #'cargo-process-bench)
+    (define-key map (kbd "C-b")   #'cargo-process-build)
+    (define-key map (kbd "C-l")   #'cargo-process-clean)
+    (define-key map (kbd "C-d")   #'cargo-process-doc)
+    (define-key map (kbd "C-v")   #'cargo-process-doc-open)
+    (define-key map (kbd "C-n")   #'cargo-process-new)
+    (define-key map (kbd "C-i")   #'cargo-process-init)
+    (define-key map (kbd "C-r")   #'cargo-process-run)
+    (define-key map (kbd "C-x")   #'cargo-process-run-example)
+    (define-key map (kbd "C-s")   #'cargo-process-search)
+    (define-key map (kbd "C-t")   #'cargo-process-test)
+    (define-key map (kbd "C-u")   #'cargo-process-update)
+    (define-key map (kbd "C-c")   #'cargo-process-repeat)
+    (define-key map (kbd "C-f")   #'cargo-process-current-test)
+    (define-key map (kbd "C-o")   #'cargo-process-current-file-tests)
+    (define-key map (kbd "C-S-o") #'cargo-process-outdated)
+    (define-key map (kbd "C-m")   #'cargo-process-fmt)
+    (define-key map (kbd "C-k")   #'cargo-process-check)
+    (define-key map (kbd "C-S-k") #'cargo-process-clippy)
+    (define-key map (kbd "C-a")   #'cargo-process-add)
+    (define-key map (kbd "C-S-d") #'cargo-process-rm)
+    (define-key map (kbd "C-S-u") #'cargo-process-upgrade)
+    (define-key map (kbd "C-S-a") #'cargo-process-audit)
+    map)
+  "Cargo-mode keymap")
+
+(fset 'cargo-minor-mode-command-map cargo-minor-mode-command-map)
 
 ;;;###autoload
 (define-minor-mode cargo-minor-mode
   "Cargo minor mode. Used to hold keybindings for cargo-mode.
 
 \\{cargo-minor-mode-map}"
-  nil " cargo" cargo-minor-mode-map)
+  :lighter " cargo"
+  :keymap '("\C-c\C-c" . cargo-minor-mode-command-map))
 
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-e") 'cargo-process-bench)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-b") 'cargo-process-build)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-l") 'cargo-process-clean)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-d") 'cargo-process-doc)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-v") 'cargo-process-doc-open)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-n") 'cargo-process-new)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-i") 'cargo-process-init)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-r") 'cargo-process-run)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-x") 'cargo-process-run-example)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-s") 'cargo-process-search)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-t") 'cargo-process-test)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-u") 'cargo-process-update)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-c") 'cargo-process-repeat)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-f") 'cargo-process-current-test)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-o") 'cargo-process-current-file-tests)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-S-o") 'cargo-process-outdated)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-m") 'cargo-process-fmt)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-k") 'cargo-process-check)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-S-k") 'cargo-process-clippy)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-a") 'cargo-process-add)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-S-d") 'cargo-process-rm)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-S-u") 'cargo-process-upgrade)
-(define-key cargo-minor-mode-map (kbd "C-c C-c C-S-a") 'cargo-process-audit)
 
 (provide 'cargo)
 ;;; cargo.el ends here
