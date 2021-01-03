@@ -56,7 +56,7 @@ Before executing the task, Emacs will prompt you to save any modified buffers
 associated with the current Cargo project. Setting `compilation-ask-about-save`
 to `nil` makes Emacs save modified buffers without asking.
 
-To change prefix (default <kbd>C-c d</kbd>) use:
+To change prefix (default <kbd>C-c C-c</kbd>) use:
 
 ```el
  (define-key cargo-mode-map (kbd ...) 'cargo-minor-mode-command-map)
