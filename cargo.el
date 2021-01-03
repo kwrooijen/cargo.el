@@ -85,7 +85,7 @@
     (define-key km (kbd "g") 'cargo-process-upgrade)
     (define-key km (kbd "y") 'cargo-process-audit)
     km)
-  "Keymap for Cargo mode commands after `cargo-minor-mode-prefix'.")
+  "Keymap for Cargo mode commands after prefix.")
 (fset 'cargo-minor-mode-command-map cargo-minor-mode-command-map)
 
 (defvar cargo-mode-map
