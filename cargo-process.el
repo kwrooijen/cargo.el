@@ -1,8 +1,8 @@
 ;;; cargo-process.el --- Cargo Process Major Mode -*-lexical-binding: t-*-
 
-;; Copyright (C) 2015  Kevin W. van Rooijen
+;; Copyright (C) 2021  Kevin W. van Rooijen
 
-;; Author: Kevin W. van Rooijen <kevin.van.rooijen@attichacker.com>
+;; Author: Kevin W. van Rooijen
 ;; Keywords: processes, tools
 
 ;; This program is free software; you can redistribute it and/or modify

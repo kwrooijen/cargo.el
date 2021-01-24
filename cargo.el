@@ -1,8 +1,8 @@
 ;;; cargo.el --- Emacs Minor Mode for Cargo, Rust's Package Manager.
 
-;; Copyright (C) 2015  Kevin W. van Rooijen
+;; Copyright (C) 2021  Kevin W. van Rooijen
 
-;; Author: Kevin W. van Rooijen <kevin.van.rooijen@attichacker.com>
+;; Author: Kevin W. van Rooijen
 ;; Version  : 0.4.0
 ;; Keywords: tools
 ;; Package-Requires: ((emacs "24.3") (rust-mode "0.2.0") (markdown-mode "2.4"))
