@@ -309,7 +309,7 @@ for error reporting."
 
 (defun cargo-process--tramp-file-name-prefix (file-name)
   "Return the TRAMP prefix for FILE-NAME.
-If FILE-NAME is not a TRAMP file, return the empty string."
+If FILE-NAME is not a TRAMP file, return an empty string."
   (if (tramp-tramp-file-p file-name)
       (let ((tramp-file-name (tramp-dissect-file-name file-name)))
         (setf (nth 6 tramp-file-name) nil)
