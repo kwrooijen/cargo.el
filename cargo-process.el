@@ -307,6 +307,15 @@ for error reporting."
       (json-read-from-string text)
     (error (user-error text))))
 
+(defun cargo-process--tramp-file-name-prefix (file-name)
+  "Return the TRAMP prefix for FILE-NAME.
+If FILE-NAME is not a TRAMP file, return the empty string."
+  (if (tramp-tramp-file-p file-name)
+      (let ((tramp-file-name (tramp-dissect-file-name file-name)))
+        (setf (nth 6 tramp-file-name) nil)
+        (tramp-make-tramp-file-name tramp-file-name))
+    ""))
+
 (defun cargo-process--workspace-root ()
   "Find the workspace root using `cargo metadata`."
   (when (cargo-process--project-root)
@@ -314,11 +323,13 @@ for error reporting."
                            (concat (shell-quote-argument cargo-process--custom-path-to-bin)
                                    " metadata --format-version 1 --no-deps")))
            (metadata-json (cargo-json-read-from-string metadata-text))
-           (workspace-root (cdr (assoc 'workspace_root metadata-json))))
+           (tramp-prefix (cargo-process--tramp-file-name-prefix (cargo-process--project-root)))
+           (workspace-root (concat tramp-prefix
+                                   (cdr (assoc 'workspace_root metadata-json)))))
       workspace-root)))
 
 (defun manifest-path-argument (name)
-  (let ((manifest-filename (cargo-process--project-root "Cargo.toml")))
+  (let ((manifest-filename (tramp-file-local-name (cargo-process--project-root "Cargo.toml"))))
     (when (and manifest-filename
                (not (member name cargo-process--no-manifest-commands)))
       (concat "--manifest-path " (shell-quote-argument manifest-filename)))))
