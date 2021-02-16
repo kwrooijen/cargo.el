@@ -316,6 +316,13 @@ If FILE-NAME is not a TRAMP file, return an empty string."
         (tramp-make-tramp-file-name tramp-file-name))
     ""))
 
+(defun cargo-process--tramp-file-local-name (file-name)
+  "Return the local component of FILE-NAME.
+If FILE-NAME is not a TRAMP file, return it unmodified."
+  (if (tramp-tramp-file-p file-name)
+      (nth 6 (tramp-dissect-file-name file-name))
+    file-name))
+
 (defun cargo-process--workspace-root ()
   "Find the workspace root using `cargo metadata`."
   (when (cargo-process--project-root)
@@ -329,7 +336,7 @@ If FILE-NAME is not a TRAMP file, return an empty string."
       workspace-root)))
 
 (defun manifest-path-argument (name)
-  (let ((manifest-filename (tramp-file-local-name (cargo-process--project-root "Cargo.toml"))))
+  (let ((manifest-filename (cargo-process--tramp-file-local-name (cargo-process--project-root "Cargo.toml"))))
     (when (and manifest-filename
                (not (member name cargo-process--no-manifest-commands)))
       (concat "--manifest-path " (shell-quote-argument manifest-filename)))))
