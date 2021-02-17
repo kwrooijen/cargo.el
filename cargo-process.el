@@ -310,8 +310,8 @@ for error reporting."
 (defun cargo-process--tramp-file-name-prefix (file-name)
   "Return the TRAMP prefix for FILE-NAME.
 If FILE-NAME is not a TRAMP file, return an empty string."
-  (fboundp 'tramp-tramp-file-p)
-  (if (tramp-tramp-file-p file-name)
+  (if (and (fboundp 'tramp-tramp-file-p)
+           (tramp-tramp-file-p file-name))
       (let ((tramp-file-name (tramp-dissect-file-name file-name)))
         (setf (nth 6 tramp-file-name) nil)
         (tramp-make-tramp-file-name tramp-file-name))
@@ -320,8 +320,8 @@ If FILE-NAME is not a TRAMP file, return an empty string."
 (defun cargo-process--tramp-file-local-name (file-name)
   "Return the local component of FILE-NAME.
 If FILE-NAME is not a TRAMP file, return it unmodified."
-  (fboundp 'tramp-tramp-file-p)
-  (if (tramp-tramp-file-p file-name)
+  (if (and (fboundp 'tramp-tramp-file-p)
+           (tramp-tramp-file-p file-name))
       (nth 6 (tramp-dissect-file-name file-name))
     file-name))
 
