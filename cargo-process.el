@@ -538,7 +538,7 @@ Cargo: Create a new cargo project."
           (cargo-process--start "New" command)))
     (set-process-sentinel
      process
-     (lambda (process event)
+     (lambda (_process _event)
        (let* ((project-root (cargo-process--project-root))
               (default-directory (or project-root default-directory)))
          (cond
@@ -576,7 +576,7 @@ DIRECTORY is created if necessary."
                                      event
                                      (expand-file-name "Cargo.toml" directory))))))
 
-(defun cargo-process--open-manifest (process event manifest-path)
+(defun cargo-process--open-manifest (_process event manifest-path)
   "Open the manifest file when process ends."
   (when (equal event "finished\n")
     (find-file manifest-path)))
