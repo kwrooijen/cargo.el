@@ -55,6 +55,7 @@
 (require 'button)
 (require 'rust-mode)
 (require 'markdown-mode)
+(require 'tramp)
 
 (defgroup cargo-process nil
   "Cargo Process group."
