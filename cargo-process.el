@@ -751,7 +751,9 @@ Cargo: Upgrade dependencies as specified in the local manifest file"
                               (y-or-n-p "Upgrade all crates? "))
                       "--all"))
                (crates (when (not all)
-                         (completing-read "Crate(s) to upgrade: " deplist nil 'confirm))))
+			 (or crates
+                             (completing-read "Crate(s) to upgrade: "
+					      deplist nil 'confirm)))))
           (cargo-process--start "Upgrade" (concat cargo-process--command-upgrade
                                                   " "
                                                   all
