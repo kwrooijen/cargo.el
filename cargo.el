@@ -5,7 +5,7 @@
 ;; Author: Kevin W. van Rooijen
 ;; Version  : 0.4.0
 ;; Keywords: tools
-;; Package-Requires: ((emacs "24.3") (rust-mode "0.2.0") (markdown-mode "2.4"))
+;; Package-Requires: ((emacs "24.3") (markdown-mode "2.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

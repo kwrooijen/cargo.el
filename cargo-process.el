@@ -53,7 +53,6 @@
 
 (require 'compile)
 (require 'button)
-(require 'rust-mode)
 (require 'markdown-mode)
 (require 'tramp)
 
@@ -420,7 +419,12 @@ Meant to be run as a `compilation-filter-hook'."
   "Return the current test."
   (save-excursion
     (unless (cargo-process--defun-at-point-p)
-      (rust-beginning-of-defun))
+      (cond ((fboundp 'rust-beginning-of-defun)
+	     (rust-beginning-of-defun))
+	    ((fboundp 'rustic-beginning-of-defun)
+	     (rustic-beginning-of-defun))
+	    (t (user-error "%s needs either rust-mode or rustic-mode"
+			   this-command))))
     (beginning-of-line)
     (search-forward "fn ")
     (let* ((line (buffer-substring-no-properties (point)
