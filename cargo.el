@@ -101,9 +101,9 @@
   "Cargo minor mode. Used to hold keybindings for cargo-mode.
 
 \\{cargo-minor-mode-command-map}"
-  nil
-  " cargo"
-  cargo-mode-map)
+  :init-value nil
+  :lighter " cargo"
+  :keymap cargo-mode-map)
 
 (provide 'cargo)
 ;;; cargo.el ends here
