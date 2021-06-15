@@ -420,11 +420,11 @@ Meant to be run as a `compilation-filter-hook'."
   (save-excursion
     (unless (cargo-process--defun-at-point-p)
       (cond ((fboundp 'rust-beginning-of-defun)
-	     (rust-beginning-of-defun))
-	    ((fboundp 'rustic-beginning-of-defun)
-	     (rustic-beginning-of-defun))
-	    (t (user-error "%s needs either rust-mode or rustic-mode"
-			   this-command))))
+             (rust-beginning-of-defun))
+            ((fboundp 'rustic-beginning-of-defun)
+             (rustic-beginning-of-defun))
+            (t (user-error "%s needs either rust-mode or rustic-mode"
+                           this-command))))
     (beginning-of-line)
     (search-forward "fn ")
     (let* ((line (buffer-substring-no-properties (point)
@@ -755,9 +755,9 @@ Cargo: Upgrade dependencies as specified in the local manifest file"
                               (y-or-n-p "Upgrade all crates? "))
                       "--all"))
                (crates (when (not all)
-			 (or crates
+                         (or crates
                              (completing-read "Crate(s) to upgrade: "
-					      deplist nil 'confirm)))))
+                                              deplist nil 'confirm)))))
           (cargo-process--start "Upgrade" (concat cargo-process--command-upgrade
                                                   " "
                                                   all
