@@ -753,7 +753,7 @@ Cargo: Upgrade dependencies as specified in the local manifest file"
     (if deplist
         (let* ((all (when (or all
                               (y-or-n-p "Upgrade all crates? "))
-                      "--all"))
+                      "--workspace"))
                (crates (when (not all)
                          (or crates
                              (completing-read "Crate(s) to upgrade: "
