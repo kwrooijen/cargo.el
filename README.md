@@ -29,34 +29,35 @@ You will now have the following key combinations at your disposal:
 
  Keybinding             | Command
 ------------------------|----------------------
- <kbd>C-c C-c C-e</kbd> | cargo-process-bench
- <kbd>C-c C-c C-b</kbd> | cargo-process-build
- <kbd>C-c C-c C-l</kbd> | cargo-process-clean
- <kbd>C-c C-c C-d</kbd> | cargo-process-doc
- <kbd>C-c C-c C-v</kbd> | cargo-process-doc-open
- <kbd>C-c C-c C-n</kbd> | cargo-process-new
- <kbd>C-c C-c C-i</kbd> | cargo-process-init
- <kbd>C-c C-c C-r</kbd> | cargo-process-run
- <kbd>C-c C-c C-x</kbd> | cargo-process-run-example
- <kbd>C-c C-c C-s</kbd> | cargo-process-search
- <kbd>C-c C-c C-t</kbd> | cargo-process-test
- <kbd>C-c C-c C-u</kbd> | cargo-process-update
- <kbd>C-c C-c C-c</kbd> | cargo-process-repeat
- <kbd>C-c C-c C-f</kbd> | cargo-process-current-test
- <kbd>C-c C-c C-o</kbd> | cargo-process-current-file-tests
- <kbd>C-c C-c C-m</kbd> | cargo-process-fmt
- <kbd>C-c C-c C-k</kbd> | cargo-process-check
- <kbd>C-c C-c C-S-k</kbd> | cargo-process-clippy
- <kbd>C-c C-c C-a</kbd> | cargo-process-add
- <kbd>C-c C-c C-S-d</kbd> | cargo-process-rm
- <kbd>C-c C-c C-S-u</kbd> | cargo-process-upgrade
- <kbd>C-c C-c C-S-a</kbd> | cargo-process-audit
+ <kbd>C-c d e</kbd>     |  cargo-process-bench
+ <kbd>C-c d b</kbd>     |  cargo-process-build
+ <kbd>C-c d l</kbd>     |  cargo-process-clean
+ <kbd>C-c d d</kbd>     |  cargo-process-doc
+ <kbd>C-c d v</kbd>     |  cargo-process-doc-open
+ <kbd>C-c d n</kbd>     |  cargo-process-new
+ <kbd>C-c d i</kbd>     |  cargo-process-init
+ <kbd>C-c d r</kbd>     |  cargo-process-run
+ <kbd>C-c d x</kbd>     |  cargo-process-run-example
+ <kbd>C-c d s</kbd>     |  cargo-process-search
+ <kbd>C-c d t</kbd>     |  cargo-process-test
+ <kbd>C-c d u</kbd>     |  cargo-process-update
+ <kbd>C-c d c</kbd>     |  cargo-process-repeat
+ <kbd>C-c d f</kbd>     |  cargo-process-current-test
+ <kbd>C-c d o</kbd>     |  cargo-process-current-file-tests
+ <kbd>C-c d q</kbd>     |  cargo-process-outdated
+ <kbd>C-c d m</kbd>     |  cargo-process-fmt
+ <kbd>C-c d k</kbd>     |  cargo-process-check
+ <kbd>C-c d z</kbd>     |  cargo-process-clippy
+ <kbd>C-c d a</kbd>     |  cargo-process-add
+ <kbd>C-c d w</kbd>     |  cargo-process-rm
+ <kbd>C-c d g</kbd>     |  cargo-process-upgrade
+ <kbd>C-c d y</kbd>     |  cargo-process-audit
 
 Before executing the task, Emacs will prompt you to save any modified buffers
 associated with the current Cargo project. Setting `compilation-ask-about-save`
 to `nil` makes Emacs save modified buffers without asking.
 
-To change prefix (default <kbd>C-c C-c</kbd>) use:
+To change prefix (default <kbd>C-c d</kbd>) use:
 
 ```el
  (define-key cargo-mode-map (kbd ...) 'cargo-minor-mode-command-map)
