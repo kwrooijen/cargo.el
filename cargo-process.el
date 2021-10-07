@@ -47,6 +47,7 @@
 ;;  * cargo-process-upgrade            - Run the optional cargo command upgrade.
 ;;  * cargo-process-outdated           - Run the optional cargo command outdated.
 ;;  * cargo-process-audit              - Run the optional cargo command audit.
+;;  * cargo-process-script             - Run the optional cargo command script.
 
 ;;
 ;;; Code:
@@ -194,6 +195,10 @@
 
 (defcustom cargo-process--command-audit "audit -f"
   "Subcommand used by `cargo-process-audit'."
+  :type 'string)
+
+(defcustom cargo-process--command-script "script"
+  "Subcommand used by `cargo-process-script'."
   :type 'string)
 
 (defvar cargo-process-favorite-crates nil)
@@ -724,6 +729,17 @@ Requires Cargo Audit to be installed."
   (cargo-process--start "Audit" (concat cargo-process--command-audit
                                         " "
                                         (cargo-process--project-root "Cargo.lock"))))
+
+;;;###autoload
+(defun cargo-process-script ()
+  "Run the Cargo script command.
+With the prefix argument, modify the command's invocation.
+Cargo: Script compiles and runs 'Cargoified Rust scripts'.
+Requires Cargo Script to be installed."
+  (interactive)
+  (cargo-process--start "Script" (concat cargo-process--command-script
+					 " "
+					 buffer-file-name)))
 
 ;;;###autoload
 (defun cargo-process-rm (crate)
