@@ -267,9 +267,9 @@
                 (buffer-substring-no-properties (line-beginning-position)
                                                 (line-end-position))))
 
-(defun cargo-process--project-root (&optional extra)
+(defun cargo-process--project-root (&optional extra dir)
   "Find the root of the current Cargo project."
-  (let ((root (locate-dominating-file (or buffer-file-name default-directory) "Cargo.toml")))
+  (let ((root (locate-dominating-file (or dir buffer-file-name default-directory) "Cargo.toml")))
     (when root
       (file-truename (concat root extra)))))
 
@@ -330,10 +330,11 @@ If FILE-NAME is not a TRAMP file, return it unmodified."
       (nth 6 (tramp-dissect-file-name file-name))
     file-name))
 
-(defun cargo-process--workspace-root ()
+(defun cargo-process--workspace-root (&optional dir)
   "Find the workspace root using `cargo metadata`."
-  (when (cargo-process--project-root)
-    (let* ((metadata-text (shell-command-to-string
+  (when (cargo-process--project-root nil dir)
+    (let* ((default-directory (or dir default-directory))
+           (metadata-text (shell-command-to-string
                            (concat (shell-quote-argument cargo-process--custom-path-to-bin)
                                    " metadata --format-version 1 --no-deps")))
            (metadata-json (cargo-json-read-from-string metadata-text))
