@@ -52,6 +52,7 @@ You will now have the following key combinations at your disposal:
  <kbd>C-c C-c C-S-u</kbd> | cargo-process-upgrade
  <kbd>C-c C-c C-S-a</kbd> | cargo-process-audit
  <kbd>C-c C-c C-S-r</kbd> | cargo-process-script
+ <kbd>C-c C-c C-w</kbd> | cargo-process-watch
 
 Before executing the task, Emacs will prompt you to save any modified buffers
 associated with the current Cargo project. Setting `compilation-ask-about-save`
@@ -92,6 +93,7 @@ Here's a list of commands and their default value.
 (setq cargo-process--command-upgrade "upgrade")
 (setq cargo-process--command-audit "audit -f")
 (setq cargo-process--command-script "script")
+(setq cargo-process--command-watch "watch -x build")
 ```
 
 ### Advanced usage
@@ -144,4 +146,10 @@ In order to run `cargo-process-audit` you need to have the `audit` package insta
 
 ```
 cargo install cargo-audit
+```
+
+In order to run `cargo-process-watch` you need to have the `watch` package installed.
+
+```
+cargo install cargo-watch
 ```
