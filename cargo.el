@@ -49,6 +49,7 @@
 ;;  * C-c C-c C-U - cargo-process-upgrade
 ;;  * C-c C-c C-A - cargo-process-audit
 ;;  * C-c C-c C-R - cargo-process-script
+;;  * C-c C-c C-w - cargo-process-watch
 
 ;;
 ;;; Code:
@@ -86,6 +87,7 @@
     (define-key km (kbd "C-S-u") 'cargo-process-upgrade)
     (define-key km (kbd "C-S-a") 'cargo-process-audit)
     (define-key km (kbd "C-S-r") 'cargo-process-script)
+    (define-key km (kbd "C-w") 'cargo-process-watch)
     km)
   "Keymap for Cargo mode commands after prefix.")
 (fset 'cargo-minor-mode-command-map cargo-minor-mode-command-map)
