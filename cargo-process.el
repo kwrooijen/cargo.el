@@ -683,7 +683,7 @@ Cargo: Update dependencies listed in Cargo.lock."
 (defun cargo-process-fmt ()
   "Run the Cargo fmt command.
 With the prefix argument, modify the command's invocation.
-Requires Cargo Fmt to be installed."
+Requires rustfmt to be installed."
   (interactive)
   (cargo-process--start "Fmt" cargo-process--command-fmt))
 
@@ -691,7 +691,7 @@ Requires Cargo Fmt to be installed."
 (defun cargo-process-outdated ()
   "Run the Cargo outdated command.
 With the prefix argument, modify the command's invocation.
-Requires Cargo Outdated to be installed."
+Requires cargo-outdated to be installed."
   (interactive)
   (cargo-process--start "Outdated" cargo-process--command-outdated))
 
@@ -709,7 +709,7 @@ Requires cargo-check to be installed."
   "Run the Cargo clippy command.
 With the prefix argument, modify the command's invocation.
 Cargo: Clippy compile the current project.
-Requires Cargo clippy to be installed."
+Requires clippy to be installed."
   (interactive)
   (cargo-process--start "Clippy" cargo-process--command-clippy))
 
@@ -730,7 +730,7 @@ Cargo: This command allows you to add a dependency to a Cargo.toml manifest file
   "Run the Cargo audit command.
 With the prefix argument, modify the command's invocation.
 Cargo: Audit checks the current project's Cargo.lock for security vulnerabilities.
-Requires Cargo Audit to be installed."
+Requires cargo-audit to be installed."
   (interactive)
   (cargo-process--start "Audit" (concat cargo-process--command-audit
                                         " "
@@ -741,7 +741,7 @@ Requires Cargo Audit to be installed."
   "Run the Cargo script command.
 With the prefix argument, modify the command's invocation.
 Cargo: Script compiles and runs 'Cargoified Rust scripts'.
-Requires Cargo Script to be installed."
+Requires cargo-script to be installed."
   (interactive)
   (cargo-process--start "Script" (concat cargo-process--command-script
 					 " "
@@ -752,7 +752,7 @@ Requires Cargo Script to be installed."
   "Run the Cargo watch command.
 With the prefix argument, modify the command's invocation.
 Cargo: Watches over your Cargo project’s source.
-Requires Cargo Watch to be installed."
+Requires cargo-watch to be installed."
   (interactive)
   (cargo-process--start "Watch" (concat cargo-process--command-watch)))
 
