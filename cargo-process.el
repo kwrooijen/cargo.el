@@ -347,6 +347,15 @@ If FILE-NAME is not a TRAMP file, return it unmodified."
                                    (cdr (assoc 'workspace_root metadata-json)))))
       workspace-root)))
 
+(defun cargo-process--get-metadata ()
+  "Return the metadata of the current package as an alist."
+  (when (cargo-process--project-root)
+    (let ((metadata-text
+           (shell-command-to-string
+            (concat (shell-quote-argument cargo-process--custom-path-to-bin)
+                    " metadata --format-version 1"))))
+      (cargo-json-read-from-string metadata-text))))
+
 (defun manifest-path-argument (name)
   (let ((manifest-filename (cargo-process--tramp-file-local-name (cargo-process--project-root "Cargo.toml"))))
     (when (and manifest-filename

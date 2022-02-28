@@ -88,6 +88,7 @@
     (define-key km (kbd "C-S-a") 'cargo-process-audit)
     (define-key km (kbd "C-S-r") 'cargo-process-script)
     (define-key km (kbd "C-w") 'cargo-process-watch)
+    (define-key km (kbd "C-S-f") 'cargo-find-dependency)
     km)
   "Keymap for Cargo mode commands after prefix.")
 (fset 'cargo-minor-mode-command-map cargo-minor-mode-command-map)
@@ -99,6 +100,33 @@
   "Keymap for Cargo mode.")
 
 (defvar cargo-minor-mode nil)
+
+(defun cargo-find-dependency (crate &optional metadata)
+  "Find CRATE's Cargo.toml.
+If METADATA is non-nil, use that instead of fetching it with cargo."
+  (interactive (let* ((metadata
+                       (cargo-process--get-metadata))
+                      (crates
+                       (mapcar (lambda (pkg) (alist-get 'name pkg))
+                               (append (alist-get 'packages metadata) nil))))
+                 (list
+                  (completing-read
+                   "Dependency: " crates nil t nil nil (symbol-at-point))
+                  metadata)))
+  (let ((filenames
+         (cl-loop for pkg in (append (alist-get 'packages metadata) nil)
+                  when (equal crate (alist-get 'name pkg))
+                  collect (alist-get 'manifest_path pkg)))
+        ;; Directly `find-file' if there's just a single match.
+        (xref-show-xrefs-function xref-show-definitions-function))
+    (if filenames
+        (xref-show-xrefs (mapcar (lambda (filename)
+                                   (xref-make crate
+                                              (xref-make-file-location
+                                               filename 1 0)))
+                                 filenames)
+                         nil)
+      (message "Can't find: %s" crate))))
 
 ;;;###autoload
 (define-minor-mode cargo-minor-mode
