@@ -53,6 +53,7 @@ You will now have the following key combinations at your disposal:
  <kbd>C-c C-c C-S-a</kbd> | cargo-process-audit
  <kbd>C-c C-c C-S-r</kbd> | cargo-process-script
  <kbd>C-c C-c C-w</kbd> | cargo-process-watch
+ <kbd>C-c C-c C-S-f</kbd> | cargo-find-dependency
 
 Before executing the task, Emacs will prompt you to save any modified buffers
 associated with the current Cargo project. Setting `compilation-ask-about-save`
