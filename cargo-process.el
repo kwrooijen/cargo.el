@@ -99,7 +99,7 @@
   "Keymap for Cargo major mode.")
 
 (defvar cargo-process--no-manifest-commands
-  '("New" "Init" "Search" "Fmt" "Audit" "Watch")
+  '("New" "Init" "Install" "Search" "Fmt" "Audit" "Watch")
   "These commands should not specify a manifest file.")
 
 (defvar cargo-process-last-command nil "Command used last for repeating.")
@@ -286,6 +286,7 @@
   (setq-local truncate-lines t)
   (run-hooks 'cargo-process-mode-hook)
   (add-hook 'compilation-filter-hook #'cargo-process--add-errno-buttons)
+  (add-hook 'compilation-filter-hook #'cargo-process--fix-missing-subcommand)
   (font-lock-add-keywords nil cargo-process-font-lock-keywords))
 
 (defun cargo-process--finished-sentinel (process event)
@@ -421,6 +422,44 @@ Returns the created process."
        (markdown-toggle-markup-hiding 1)
        (goto-char 1)
        (current-buffer)))))
+
+(defvar cargo-process--install-cmd-alist
+  '(("check" . "cargo-check")
+    ("clippy" . "clippy")
+    ("script" . "cargo-script")
+    ("add" . "cargo-edit")
+    ("rm" . "cargo-edit")
+    ("upgrade" . "cargo-edit")
+    ("audit" . "cargo-audit")
+    ("watch" . "cargo-watch"))
+"Alist of subcommand-component pairs.
+'cargo install COMPONENT' should provide SUBCOMMAND.")
+
+(defun cargo-process--fix-missing-subcommand ()
+  "Search complication output for missing subcommand and offer solution.
+Meant to be run as a `compilation-filter-hook'."
+  (save-excursion
+    (goto-char compilation-filter-start)
+    (beginning-of-line)
+    (when (looking-at "error: no such subcommand: `\\(.*\\)`")
+      (if-let* ((missing-cmd
+                 (match-string 1))
+                (component
+                 (alist-get missing-cmd cargo-process--install-cmd-alist
+                            nil nil 'equal)))
+          (when (y-or-n-p (concat "Missing subcommand: '" missing-cmd
+                                  "', fix it by running '"
+                                  "cargo install " component "'? "))
+            (cargo-process--start "Install" (concat "install " component)))))
+    (when (looking-at
+           "^error: the '\\([^']*\\)' binary, \
+normally provided by the '\\([^']*\\)' component")
+      (if-let* ((missing-binary (match-string 1))
+                (component (match-string 2)))
+          (when (y-or-n-p (concat "Missing binary: '" missing-binary
+                                  "', fix it by running '"
+                                  "cargo install " component "'? "))
+            (cargo-process--start "Install" (concat "install " component)))))))
 
 (defun cargo-process--add-errno-buttons ()
   "Turn error numbers into clickable links in Cargo process output.
