@@ -114,7 +114,11 @@ If METADATA is non-nil, use that instead of fetching it with cargo."
                    "Dependency: " crates nil t nil nil (symbol-at-point))
                   metadata)))
   (let ((filenames
-         (cl-loop for pkg in (append (alist-get 'packages metadata) nil)
+         (cl-loop for pkg in (append
+                              (alist-get 'packages
+                                         (or metadata
+                                             (cargo-process--get-metadata)))
+                              nil)
                   when (equal crate (alist-get 'name pkg))
                   collect (alist-get 'manifest_path pkg)))
         ;; Directly `find-file' if there's just a single match.
