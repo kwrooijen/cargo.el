@@ -182,6 +182,12 @@
   "Subcommand used by `cargo-process-clippy'."
   :type 'string)
 
+(defcustom cargo-process--command-clippy--additional-args
+  "Subcommand used by `cargo-process-clippy'.
+Changing `cargo-process--command-clippy' use this when trying to customize
+the clippy command so the manifest path is in the correct position."
+  nil)
+
 (defcustom cargo-process--command-add "add"
   "Subcommand used by `cargo-process-add'."
   :type 'string)
@@ -363,7 +369,7 @@ If FILE-NAME is not a TRAMP file, return it unmodified."
                (not (member name cargo-process--no-manifest-commands)))
       (concat "--manifest-path " (shell-quote-argument manifest-filename)))))
 
-(defun cargo-process--start (name command &optional last-cmd opens-external)
+(defun cargo-process--start (name command &optional last-cmd opens-external additional-args)
   "Start the Cargo process NAME with the cargo command COMMAND.
 OPENS-EXTERNAL is non-nil if the COMMAND is expected to open an external application.
 Returns the created process."
@@ -377,7 +383,8 @@ Returns the created process."
                                                   (mapconcat #'identity (list (shell-quote-argument cargo-process--custom-path-to-bin)
                                                                               command
                                                                               (manifest-path-argument name)
-                                                                              cargo-process--command-flags)
+                                                                              cargo-process--command-flags
+                                                                              additional-args)
                                                              " ")))))
          (default-directory (or project-root default-directory)))
     (save-some-buffers (not compilation-ask-about-save)
@@ -759,7 +766,11 @@ With the prefix argument, modify the command's invocation.
 Cargo: Clippy compile the current project.
 Requires clippy to be installed."
   (interactive)
-  (cargo-process--start "Clippy" cargo-process--command-clippy))
+  (cargo-process--start "Clippy"
+                        cargo-process--command-clippy
+                        nil
+                        nil
+                        cargo-process--command-clippy--additional-args))
 
 ;;;###autoload
 (defun cargo-process-add (crate)
