@@ -182,11 +182,10 @@
   "Subcommand used by `cargo-process-clippy'."
   :type 'string)
 
-(defcustom cargo-process--command-clippy--additional-args
+(defcustom cargo-process--command-clippy--additional-args nil
   "Subcommand used by `cargo-process-clippy'.
 Changing `cargo-process--command-clippy' use this when trying to customize
-the clippy command so the manifest path is in the correct position."
-  nil)
+the clippy command so the manifest path is in the correct position.")
 
 (defcustom cargo-process--command-add "add"
   "Subcommand used by `cargo-process-add'."
