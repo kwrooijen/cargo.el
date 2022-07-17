@@ -68,30 +68,25 @@
       (expand-file-name "cargo" "~/.cargo/bin")
       "/usr/local/bin/cargo")
   "Custom path to the cargo executable"
-  :type 'file
-  :group 'cargo-process)
+  :type 'file)
 
 (defcustom cargo-process--rustc-cmd
   (or (executable-find "rustc")
       (expand-file-name "rustc" "~/.cargo/bin")
       "/usr/local/bin/rustc")
   "Custom path to the rustc executable"
-  :type 'file
-  :group 'cargo-process)
+  :type 'file)
 
 (defcustom cargo-process--enable-rust-backtrace nil
   "Set RUST_BACKTRACE environment variable to 1 for tasks test and run"
-  :type 'boolean
-  :group 'cargo-process)
+  :type 'boolean)
 
 (defcustom cargo-process--command-flags ""
   "Flags to be added to every cargo command when run."
-  :group 'cargo-process
   :type 'string)
 
 (defcustom cargo-process--open-file-after-new nil
   "Open the created project file after generating a new project"
-  :group 'cargo-process
   :type 'boolean)
 
 (defvar cargo-process-mode-map
@@ -182,11 +177,10 @@
   "Subcommand used by `cargo-process-clippy'."
   :type 'string)
 
-(defcustom cargo-process--command-clippy--additional-args
+(defcustom cargo-process--command-clippy--additional-args nil
   "Subcommand used by `cargo-process-clippy'.
 Changing `cargo-process--command-clippy' use this when trying to customize
-the clippy command so the manifest path is in the correct position."
-  nil)
+the clippy command so the manifest path is in the correct position.")
 
 (defcustom cargo-process--command-add "add"
   "Subcommand used by `cargo-process-add'."
@@ -216,33 +210,27 @@ the clippy command so the manifest path is in the correct position."
 
 (defface cargo-process--ok-face
   '((t (:inherit success)))
-  "Ok face"
-  :group 'cargo-process)
+  "Ok face")
 
 (defface cargo-process--error-face
   '((t (:inherit error)))
-  "Error face"
-  :group 'cargo-process)
+  "Error face")
 
 (defface cargo-process--warning-face
   '((t (:inherit warning)))
-  "Warning face"
-  :group 'cargo-process)
+  "Warning face")
 
 (defface cargo-process--pointer-face
   '((t (:inherit font-lock-negation-char-face)))
-  "Pointer face"
-  :group 'cargo-process)
+  "Pointer face")
 
 (defface cargo-process--standard-face
   '((t (:inherit font-lock-comment-face)))
-  "Standard face"
-  :group 'cargo-process)
+  "Standard face")
 
 (defface cargo-process--errno-face
   '((t (:inherit link)))
-  "Error number face"
-  :group 'cargo-process)
+  "Error number face")
 
 (defconst cargo-process--rust-backtrace "RUST_BACKTRACE")
 
