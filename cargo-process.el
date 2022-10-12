@@ -157,6 +157,9 @@
   "Subcommand used by `cargo-process-current-file-tests'."
   :type 'string)
 
+(defcustom cargo-process--command-test--additional-args nil
+  "Subcommand used by `cargo-process--command-test', `cargo-process--command-current-test` and `cargo-process--command-current-file-tests`.")
+
 (defcustom cargo-process--command-update "update"
   "Subcommand used by `cargo-process-update'."
   :type 'string)
@@ -691,7 +694,7 @@ any) as the default if none is entered."
 With the prefix argument, modify the command's invocation.
 Cargo: Run the tests."
   (interactive)
-  (cargo-process--start "Test" cargo-process--command-test))
+  (cargo-process--start "Test" cargo-process--command-test nil nil cargo-process--command-test--additional-args))
 
 ;;;###autoload
 (defun cargo-process-current-test ()
@@ -702,7 +705,10 @@ Cargo: Run the tests."
   (cargo-process--start "Test"
                         (concat cargo-process--command-current-test
                                 " "
-                                (cargo-process--get-current-test-fullname))))
+                                (cargo-process--get-current-test-fullname))
+			nil
+			nil
+			cargo-process--command-test--additional-args))
 
 ;;;###autoload
 (defun cargo-process-current-file-tests ()
@@ -710,9 +716,13 @@ Cargo: Run the tests."
 With the prefix argument, modify the command's invocation.
 Cargo: Run the tests."
   (interactive)
-  (cargo-process--start "Test" (concat cargo-process--command-current-file-tests
-                                       " "
-                                       (cargo-process--get-current-mod))))
+  (cargo-process--start "Test" 
+			(concat cargo-process--command-current-file-tests
+                                " "
+                                (cargo-process--get-current-mod))
+			nil
+			nil
+			cargo-process--command-test--additional-args))
 
 ;;;###autoload
 (defun cargo-process-update ()
