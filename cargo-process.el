@@ -49,6 +49,7 @@
 ;;  * cargo-process-audit              - Run the optional cargo command audit.
 ;;  * cargo-process-script             - Run the optional cargo command script.
 ;;  * cargo-process-watch              - Run the optional cargo command watch, build by default
+;;  * cargo-process-watch-run          - Run the optional cargo command watch, run by default
 
 ;;
 ;;; Code:
@@ -206,6 +207,10 @@ the clippy command so the manifest path is in the correct position.")
   :type 'string)
 
 (defcustom cargo-process--command-watch "watch -x build"
+  "Subcommand used by `cargo-process-watch'."
+  :type 'string)
+
+(defcustom cargo-process--command-watch-run "watch -x run"
   "Subcommand used by `cargo-process-watch'."
   :type 'string)
 
@@ -812,6 +817,15 @@ Cargo: Watches over your Cargo project’s source.
 Requires cargo-watch to be installed."
   (interactive)
   (cargo-process--start "Watch" (concat cargo-process--command-watch)))
+
+;;;###autoload
+(defun cargo-process-watch-run ()
+  "Run the Cargo watch command.
+With the prefix argument, modify the command's invocation.
+Cargo: Watches over your Cargo project’s source.
+Requires cargo-watch to be installed."
+  (interactive)
+  (cargo-process--start "Watch" (concat cargo-process--command-watch-run)))
 
 ;;;###autoload
 (defun cargo-process-rm (crate)
