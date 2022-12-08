@@ -159,7 +159,8 @@
   :type 'string)
 
 (defcustom cargo-process--command-test--additional-args nil
-  "Subcommand used by `cargo-process--command-test', `cargo-process--command-current-test` and `cargo-process--command-current-file-tests`.")
+  "Subcommand used by `cargo-process--command-test', `cargo-process--command-current-test` and `cargo-process--command-current-file-tests`."
+  :type 'string)
 
 (defcustom cargo-process--command-update "update"
   "Subcommand used by `cargo-process-update'."
@@ -184,7 +185,8 @@
 (defcustom cargo-process--command-clippy--additional-args nil
   "Subcommand used by `cargo-process-clippy'.
 Changing `cargo-process--command-clippy' use this when trying to customize
-the clippy command so the manifest path is in the correct position.")
+the clippy command so the manifest path is in the correct position."
+  :type 'string)
 
 (defcustom cargo-process--command-add "add"
   "Subcommand used by `cargo-process-add'."
@@ -292,7 +294,7 @@ the clippy command so the manifest path is in the correct position.")
   (font-lock-add-keywords nil cargo-process-font-lock-keywords))
 
 (defun cargo-process--finished-sentinel (process event)
-  "Execute after PROCESS return and EVENT is 'finished'."
+  "Execute after PROCESS return and EVENT is \\='finished\\='."
   (compilation-sentinel process event)
   (when (equal event "finished\n")
     (message "Cargo Process finished.")))
@@ -436,7 +438,7 @@ Returns the created process."
     ("audit" . "cargo-audit")
     ("watch" . "cargo-watch"))
 "Alist of subcommand-component pairs.
-'cargo install COMPONENT' should provide SUBCOMMAND.")
+\\='cargo install COMPONENT\\=' should provide SUBCOMMAND.")
 
 (defun cargo-process--fix-missing-subcommand ()
   "Search complication output for missing subcommand and offer solution.
