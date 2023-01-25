@@ -55,6 +55,7 @@
 ;;; Code:
 
 (require 'cargo-process)
+(require 'xref)
 
 (defgroup cargo nil
   "Cargo group."
