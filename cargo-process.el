@@ -487,7 +487,9 @@ Meant to be run as a `compilation-filter-hook'."
              (rust-beginning-of-defun))
             ((fboundp 'rustic-beginning-of-defun)
              (rustic-beginning-of-defun))
-            (t (user-error "%s needs either rust-mode or rustic-mode"
+            ((fboundp 'treesit-beginning-of-defun)
+             (treesit-beginning-of-defun))
+            (t (user-error "%s needs either rust-mode, rustic-mode, or rust-ts-mode"
                            this-command))))
     (beginning-of-line)
     (search-forward "fn ")
