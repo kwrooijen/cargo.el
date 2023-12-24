@@ -216,6 +216,10 @@ the clippy command so the manifest path is in the correct position."
   "Subcommand used by `cargo-process-watch'."
   :type 'string)
 
+(defcustom cargo-process--command-fix "fix --allow-staged"
+  "Subcommand used by `cargo-process-fix'."
+  :type 'string)
+
 (defvar cargo-process-favorite-crates nil)
 
 (defface cargo-process--ok-face
@@ -828,6 +832,16 @@ Cargo: Watches over your Cargo project’s source.
 Requires cargo-watch to be installed."
   (interactive)
   (cargo-process--start "Watch" (concat cargo-process--command-watch-run)))
+
+
+;;;###autoload
+(defun cargo-process-fix ()
+  "Run the Cargo fix command.
+With the prefix argument, modify the command's invocation.
+Cargo: Automatically fix lint warnings reported by rustc.
+Allows fixing staged files by default."
+  (interactive)
+  (cargo-process--start "Fix" cargo-process--command-fix))
 
 ;;;###autoload
 (defun cargo-process-rm (crate)
