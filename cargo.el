@@ -50,6 +50,7 @@
 ;;  * C-c C-c C-A - cargo-process-audit
 ;;  * C-c C-c C-R - cargo-process-script
 ;;  * C-c C-c C-w - cargo-process-watch
+;;  * C-c C-c C-x - cargo-process-fix
 
 ;;
 ;;; Code:
@@ -89,6 +90,7 @@
     (define-key km (kbd "C-S-a") 'cargo-process-audit)
     (define-key km (kbd "C-S-r") 'cargo-process-script)
     (define-key km (kbd "C-w") 'cargo-process-watch)
+    (define-key km (kbd "C-x") 'cargo-process-fix)
     (define-key km (kbd "C-S-f") 'cargo-find-dependency)
     km)
   "Keymap for Cargo mode commands after prefix.")
