@@ -394,7 +394,6 @@ Returns the created process."
     (let ((default-directory (or (cargo-process--workspace-root)
                                  default-directory)))
       (compilation-start cmd 'cargo-process-mode (lambda(_) buffer)))
-    (end-of-buffer-other-window buffer)
     (let ((process (get-buffer-process buffer)))
       (set-process-sentinel process 'cargo-process--finished-sentinel)
       process)))
