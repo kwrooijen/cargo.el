@@ -340,12 +340,28 @@ If FILE-NAME is not a TRAMP file, return it unmodified."
       (nth 6 (tramp-dissect-file-name file-name))
     file-name))
 
+(defun cargo-process--call-process-to-string (command &rest ARGS)
+  "Executes `command` and returns its output(std out) as string."
+  (let* ((err-file (make-temp-file "cargo-error"))
+         (output (with-output-to-string
+                   (with-current-buffer
+                       standard-output
+                     (apply #'call-process command nil (list t err-file) nil ARGS))))
+         (std-err (with-output-to-string
+                    (with-current-buffer
+                        standard-output
+                      (insert-file-contents err-file)))))
+    (when (length std-err)
+      (message "cargo-stderr: %s" std-err))
+    (delete-file err-file)
+    output))
+
 (defun cargo-process--workspace-root ()
   "Find the workspace root using `cargo metadata`."
   (when (cargo-process--project-root)
-    (let* ((metadata-text (shell-command-to-string
-                           (concat (shell-quote-argument cargo-process--custom-path-to-bin)
-                                   " metadata --format-version 1 --no-deps")))
+    (let* ((metadata-text (cargo-process--call-process-to-string
+                           cargo-process--custom-path-to-bin
+                           "metadata" "--format-version" "1" "--no-deps"))
            (metadata-json (cargo-json-read-from-string metadata-text))
            (tramp-prefix (cargo-process--tramp-file-name-prefix (cargo-process--project-root)))
            (workspace-root (concat tramp-prefix
@@ -410,8 +426,8 @@ Returns the created process."
      (with-current-buffer (get-buffer-create "*rust errno*")
        (let ((buffer-read-only nil))
          (erase-buffer)
-         (insert (shell-command-to-string
-                  (concat cargo-process--rustc-cmd " --explain=" errno))))
+         (insert (cargo-process--call-process-to-string
+                  cargo-process--rustc-cmd "--explain" errno)))
        (markdown-view-mode)
        (setq-local markdown-fontify-code-blocks-natively t)
        (setq-local markdown-fontify-code-block-default-mode 'rust-mode)
