@@ -68,15 +68,15 @@
   (or (executable-find "cargo")
       (expand-file-name "cargo" "~/.cargo/bin")
       "/usr/local/bin/cargo")
-  "Custom path to the cargo executable"
-  :type 'file)
+  "Custom path to the cargo executable, set to nil to find it at runtime"
+  :type '(choice file (const nil)))
 
 (defcustom cargo-process--rustc-cmd
   (or (executable-find "rustc")
       (expand-file-name "rustc" "~/.cargo/bin")
       "/usr/local/bin/rustc")
-  "Custom path to the rustc executable"
-  :type 'file)
+  "Custom path to the rustc executable, set to nil to find it at runtime"
+  :type '(choice file (const nil)))
 
 (defcustom cargo-process--enable-rust-backtrace nil
   "Set RUST_BACKTRACE environment variable to 1 for tasks test and run"
@@ -271,6 +271,24 @@ the clippy command so the manifest path is in the correct position."
   'face 'cargo-process--errno-face
   'action #'cargo-process--explain-action)
 
+(defun cargo-process--find-cargo-path ()
+  (if cargo-process--custom-path-to-bin
+      (if (file-executable-p cargo-process--custom-path-to-bin)
+          cargo-process--custom-path-to-bin
+        (error (format "%s is not executable" cargo-process--custom-path-to-bin)))
+    (let ((bin (executable-find "cargo")))
+      (unless bin (error "`cargo' not installed"))
+      bin)))
+
+(defun cargo-process--find-rustc-path ()
+  (if cargo-process--rustc-cmd
+      (if (file-executable-p cargo-process--rustc-cmd)
+          cargo-process--rustc-cmd
+        (error (format "%s is not executable" cargo-process--rustc-cmd)))
+    (let ((bin (executable-find "rustc")))
+      (unless bin (error "`rustc' not installed"))
+      bin)))
+
 (defun cargo-process--defun-at-point-p ()
   (string-match cargo-process-test-regexp
                 (buffer-substring-no-properties (line-beginning-position)
@@ -344,7 +362,7 @@ If FILE-NAME is not a TRAMP file, return it unmodified."
   "Find the workspace root using `cargo metadata`."
   (when (cargo-process--project-root)
     (let* ((metadata-text (shell-command-to-string
-                           (concat (shell-quote-argument cargo-process--custom-path-to-bin)
+                           (concat (shell-quote-argument (cargo-process--find-cargo-path))
                                    " metadata --format-version 1 --no-deps")))
            (metadata-json (cargo-json-read-from-string metadata-text))
            (tramp-prefix (cargo-process--tramp-file-name-prefix (cargo-process--project-root)))
@@ -357,7 +375,7 @@ If FILE-NAME is not a TRAMP file, return it unmodified."
   (when (cargo-process--project-root)
     (let ((metadata-text
            (shell-command-to-string
-            (concat (shell-quote-argument cargo-process--custom-path-to-bin)
+            (concat (shell-quote-argument (cargo-process--find-cargo-path))
                     " metadata --format-version 1"))))
       (cargo-json-read-from-string metadata-text))))
 
@@ -378,7 +396,7 @@ Returns the created process."
           (or last-cmd
               (cargo-process--maybe-read-command
                (cargo-process--augment-cmd-for-os opens-external
-                                                  (mapconcat #'identity (list (shell-quote-argument cargo-process--custom-path-to-bin)
+                                                  (mapconcat #'identity (list (shell-quote-argument (cargo-process--find-cargo-path))
                                                                               command
                                                                               (manifest-path-argument name)
                                                                               cargo-process--command-flags
@@ -411,7 +429,7 @@ Returns the created process."
        (let ((buffer-read-only nil))
          (erase-buffer)
          (insert (shell-command-to-string
-                  (concat cargo-process--rustc-cmd " --explain=" errno))))
+                  (concat (cargo-process--find-rustc-path) " --explain=" errno))))
        (markdown-view-mode)
        (setq-local markdown-fontify-code-blocks-natively t)
        (setq-local markdown-fontify-code-block-default-mode 'rust-mode)
@@ -722,7 +740,7 @@ Cargo: Run the tests."
 With the prefix argument, modify the command's invocation.
 Cargo: Run the tests."
   (interactive)
-  (cargo-process--start "Test" 
+  (cargo-process--start "Test"
 			(concat cargo-process--command-current-file-tests
                                 " "
                                 (cargo-process--get-current-mod))
